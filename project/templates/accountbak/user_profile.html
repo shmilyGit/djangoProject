@@ -1,0 +1,293 @@
+{% extends "frame/base.html" %}
+{% load staticfiles %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'layui/css/layui.css' %}" />
+
+<div id="user-profile-3" class="user-profile row">
+	<div class="col-sm-offset-1 col-sm-10">
+			<div class="tabbable">
+				<ul class="nav nav-tabs padding-16">
+					<li {% if tab == '1' %}class="active" {% endif %}>
+						<a href="{% url 'account:user_profile' 1 %}">
+							<i class="green ace-icon fa fa-pencil-square-o bigger-125"></i>
+							Basic Info 
+						</a>
+					</li>
+
+					<li {% if tab == '2' %}class="active" {% endif %}>
+						<a  href="{% url 'account:user_profile' 2 %}">
+							<i class="blue ace-icon fa fa-key bigger-125"></i>
+							Password 
+						</a>
+					</li>
+				</ul>
+
+				<div class="tab-content profile-edit-tab-content">
+                    {% if msg %}
+                    <div {% if msg == '1' %}class="alert alert-success"{% elif msg == '2'%}class="alert alert-danger"{% endif %}>
+                        <a href="#" class="close" data-dismiss="alert">
+                            &times;
+                        </a>
+                        {% if msg == '1' %}
+                        <strong>Success！</strong> Modify Success.
+                        {% elif msg == '2' %}
+                        <strong>Warning！</strong>Modify Error, Please Check ...
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+					<div id="edit-basic" {% if tab == '1' %} class="tab-pane in active" {% else %} class="tab-pane" {% endif %}>
+                        <div class="row">
+                            <div class="col-sm-7">
+						        <form class="form-horizontal" action="{% url 'account:save_userinfo' %}" method="post">{% csrf_token %}
+						        	<h4 class="header blue bolder smaller">General</h4>
+
+						        	<div class="form-group">
+						        		<label class="col-sm-3 control-label no-padding-right" >Username :</label>
+
+						        		<div class="col-sm-9">
+						        		<label class="control-label padding-left">{{ user.username }}</label>
+						        		</div>
+						        	</div>
+
+						        	<div class="space-4"></div>
+
+						        	<div class="form-group">
+						        		<label class="col-sm-3 control-label no-padding-right" for="id_name">Name :</label>
+
+						        		<div class="col-sm-9">
+						        			<input class="col-xs-12 col-sm-10 input-large" type="text" id="id_name" name="name" placeholder="Name" value="{{ userinfo.name}}" />
+						        		</div>
+						        	</div>
+
+						        	<div class="space-4"></div>
+
+						        	<div class="form-group">
+						        		<label class="col-sm-3 control-label no-padding-right">Gender :</label>
+
+						        		<div class="col-sm-9">
+						        		    <label class="control-label">
+						        				<input name="gender" type="radio" class="ace" {% if userinfo.gender is True  or userinfo.gender == "1" %} checked="checked" {% endif %} value="1" />
+						        				<span class="lbl middle"> Male</span>
+                                            </label>
+						        			&nbsp; &nbsp; &nbsp;
+						        		    <label class="control-label">
+						        				<input name="gender" type="radio" class="ace"{% if userinfo.gender is False or userinfo.gender == "0" %} checked="checked" {% endif %}  value="0"/>
+						        				<span class="lbl middle"> Female</span>
+                                            </label>
+						        		</div>
+						        	</div>
+
+						        	<div class="space-4"></div>
+
+						        	<div class="form-group">
+						        		<label class="col-sm-3 control-label no-padding-right" for="id_birth">Birth Date :</label>
+
+						        		<div class="col-sm-9">
+						        			<div class="input-large">
+						        				<div class="input-group">
+						        					<input class="input-large" id="id_birth" name="birth" type="text" data-date-format="yyyy-mm-dd" placeholder="yyyy-mm-dd" value="{{ userinfo.birth | date:"Y-m-d" }}" readonly=""/>
+						        					<span class="input-group-addon">
+						        						<i class="ace-icon fa fa-calendar"></i>
+						        					</span>
+						        				</div>
+						        			</div>
+						        		</div>
+						        	</div>
+
+						        	<div class="space-4"></div>
+
+						        	<div class="form-group">
+						        		<label class="col-sm-3 control-label no-padding-right" for="id_email">Email :</label>
+
+						        		<div class="col-sm-9">
+                                            <div class="row">
+						        		        <div class="col-sm-5">
+						        		    	    <span class="input-icon input-icon-right">
+						        		    	    	<i class="ace-icon fa fa-envelope"></i>
+						        		    	    	<input class="col-xs-12 col-sm-10 input-large"  type="email" id="id_email" name="email" value="{{ user.email }}" />
+						        		    	    </span>
+						        		        </div>
+
+						        		        <div class="col-sm-6">
+								                    <label class="control-label padding-left red">{{ user_form.email.errors }}</label>
+						        		        </div>
+						        		    </div>
+						        		</div>
+						        	</div>
+
+						        	<div class="space-4"></div>
+
+						        	<div class="form-group">
+						        		<label class="col-sm-3 control-label no-padding-right" for="id_website">Website :</label>
+
+						        		<div class="col-sm-9">
+						        		    <div class="row">
+						        		        <div class="col-sm-5">
+						        			        <span class="input-icon input-icon-right">
+						        			        	<input class="col-xs-12 col-sm-10 input-large"  type="url" id="id_website" name="website" placeholder="http://" value="{{ userinfo.website}}" />
+						        			        	<i class="ace-icon fa fa-globe"></i>
+						        			        </span>
+						        		        </div>
+
+						        		        <div class="col-sm-6">
+								                    <label class="control-label padding-left red">{{ userinfo_form.website.errors }}</label>
+						        		        </div>
+						        		    </div>
+						        		</div>
+						        	</div>
+
+						        	<div class="space-4"></div>
+
+						        	<div class="form-group">
+						        		<label class="col-sm-3 control-label no-padding-right" for="id_phone">Phone :</label>
+
+						        		<div class="col-sm-9">
+						        			<span class="input-icon input-icon-right">
+						        				<input class="col-xs-12 col-sm-10 input-large input-mask-phone" type="text" id="id_phone" name="phone" value="{{ userinfo.phone }}"/>
+						        				<i class="ace-icon fa fa-phone fa-flip-horizontal"></i>
+						        			</span>
+						        		</div>
+						        	</div>
+
+						        	<div class="form-group">
+						        		<label class="col-sm-3 control-label no-padding-right" for="id_comment">Comment :</label>
+
+						        		<div class="col-sm-9">
+						        			<textarea class="input-large" id="id_comment" name="comment">{{ userinfo.comment }}</textarea>
+						        		</div>
+						        	</div>
+
+						        	<div class="space-4"></div>
+
+						        	<div class="from-group clearfix">
+						        		<div class="col-md-offset-3 col-md-9">
+						        			<button class="btn btn-info" type="submit">
+						        				<i class="ace-icon fa fa-check bigger-110"></i>
+						        				Save
+						        			</button>
+
+						        			&nbsp; &nbsp;
+						        			<button class="btn" type="reset">
+						        				<i class="ace-icon fa fa-undo bigger-110"></i>
+						        				Reset
+						        			</button>
+						        		</div>
+						        	</div>
+						        </form>
+                            </div>
+                            <div class="col-sm-5">
+                                <style>
+                                   .sgl_headImg{
+                                        margin:auto;
+                                        width:200px;
+                                        height:200px;
+                                        cursor:pointer;
+                                    } 
+                                </style>
+						        <h4 class="header blue bolder smaller">Head portrait</h4>
+                                <div class="row">
+                                    {% if userinfo.photo %}
+                                    <img class="img-circle img-responsive sgl_headImg" name="user_face" title="click & modify" src="{{ userinfo.photo | striptags }}" onclick="upload_image_layer()">
+                                    {% else %}
+                                    <img class="img-circle img-responsive sgl_headImg" name="user_face" title="click & modify" src="{% static 'images/wolf.jpg' %}" onclick="upload_image_layer()">
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+					</div>
+
+
+					<div id="edit-password" {% if tab == '2' %} class="tab-pane in active" {% else %} class="tab-pane" {% endif %}>
+						<form class="form-horizontal" method="post" action="{% url 'account:password_change' %}">{% csrf_token %}
+							<div class="space-10"></div>
+
+							<div class="form-group">
+								<label class="col-sm-3 control-label no-padding-right" for="id_old_password">Old Password</label>
+
+								<div class="col-sm-9">
+									<input class="col-xs-4" name="old_password" type="password" id="id_old_password" />
+								    <label class="control-label no-padding-left red">{{ form.old_password.errors }}</label>
+								</div>
+							</div>
+
+							<div class="space-4"></div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label no-padding-right" for="id_new_password1">New Password</label>
+
+								<div class="col-sm-9">
+									<input class="col-xs-4" name="new_password1" type="password" id="id_new_password1" />
+								    <label class="control-label no-padding-left red">{{ form.new_password1.errors }}</label>
+								</div>
+							</div>
+
+							<div class="space-4"></div>
+
+							<div class="form-group">
+								<label class="col-sm-3 control-label no-padding-right" for="id_new_password2">Confirm Password</label>
+
+								<div class="col-sm-9">
+									<input class="col-xs-4" name="new_password2" type="password" id="id_new_password2" />
+								    <label class="control-label no-padding-left red">{{ form.new_password2.errors }}</label>
+								</div>
+							</div>
+
+							<div class="space-4"></div>
+
+							<div class="form-group">
+								<label class="col-sm-3 control-label no-padding-right"></label>
+								<div class="col-md-offset-3 col-md-9">
+									<button class="btn btn-info" type="submit">
+										<i class="ace-icon fa fa-check bigger-110"></i>
+										Save
+									</button>
+
+									&nbsp; &nbsp;
+									<button class="btn" type="reset">
+										<i class="ace-icon fa fa-undo bigger-110"></i>
+										Reset
+									</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+	</div><!-- /.span -->
+</div><!-- /.user-profile -->
+{% endblock %}
+
+{% block jsscript%}
+<script type="text/javascript"  src="{% static 'assets/js/jquery.gritter.min.js' %}"></script>
+<script type="text/javascript"  src="{% static 'assets/js/bootstrap-datepicker.min.js' %}"></script>
+<script type="text/javascript"  src="{% static 'assets/js/jquery.hotkeys.index.min.js' %}"></script>
+<script type="text/javascript"  src="{% static 'assets/js/jquery.maskedinput.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'layui/layui.js' %}"></script>
+<!-- inline scripts related to this page -->
+<script type="text/javascript">
+	jQuery(function($) {
+		$('.input-mask-phone').mask('999-9999-9999');
+
+        layui.use("laydate", function(){
+            var laydate= layui.laydate;
+            laydate.render({
+                elem: '#id_birth',//指定元素
+                showBottom: false,
+                trigger:'click'
+            });
+        });
+	});
+
+	function upload_image_layer(){
+        layui.use("layer", function(){
+            var layer = layui.layer;
+		    layer.open({
+		    	title:"Upload the picture",	
+		    	area: ['650px','520px'],
+		    	type: 2,
+		    	content: "{% url 'account:my_headimage' %}",
+		    });
+        });
+	}
+</script>
+{% endblock %}

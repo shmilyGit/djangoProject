@@ -1,0 +1,33 @@
+{% load staticfiles %}
+<!doctype html>
+<html class="x-admin-sm">
+    <head>
+        <meta charset="UTF-8">
+        <title>后台登录-X-admin2.2</title>
+        <meta name="renderer" content="webkit|ie-comp|ie-stand">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+        <meta http-equiv="Cache-Control" content="no-siteapp" />
+        <link rel="stylesheet" href="{% static 'X-admin/css/font.css' %}">
+        <link rel="stylesheet" href="{% static 'X-admin/css/xadmin.css' %}">
+        <!-- <link rel="stylesheet" href="./css/theme5.css"> -->
+        <script src="{% static 'X-admin/lib/layui/layui.js' %}" charset="utf-8"></script>
+        <script type="text/javascript" src="{% static 'X-admin/js/xadmin.js' %}"></script>
+        <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+        <!--[if lt IE 9]>
+        <script type="text/javascript" src="{% static 'common/js/html5.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'common/js/respond.min.js' %}"></script>
+        <![endif]-->
+        <script>
+            // 是否开启刷新记忆tab功能
+            // var is_remember = false;
+        </script>
+    </head>
+    <body class="index">
+        {% include "frame/header.html" %}
+        <!-- 中部开始 -->
+        {% include "frame/sidebar.html" %}
+        {% include "frame/content.html" %}
+        <!-- 中部结束 -->
+    </body>
+</html>
