@@ -39,14 +39,6 @@ from .models import UserInfo
 UserModel = get_user_model()
 
 ##BEGIN: Add by SRJ-SGL 
-class MemListPageView(LoginRequiredMixin, TemplateView):
-    template_name = "frame/member-list.html"
-    login_url = "/account/login/"
-
-class Welcome1PageView(LoginRequiredMixin, TemplateView):
-    template_name = "frame/welcome1.html"
-    login_url = "/account/login/"
-
 class IndexPageView(LoginRequiredMixin, TemplateView):
     template_name = "frame/index.html"
     login_url = "/account/login/"

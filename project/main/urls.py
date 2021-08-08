@@ -24,20 +24,27 @@ from django.conf.urls.static import static
 from django.views.static import serve
 
 urlpatterns = [
+    #登录页
+    #直接访问IP:port 后边不用加路径, 即http://192.168.5.105:8000就会跳转到login.html
+    #方法一,这样不会在html模板中使用{{form.password}}
+	#url('', TemplateView.as_view(template_name="account/login.html"), name='show_loginPage'),
+    #方法二,这样可以在html模板中使用{{form.password}}
+	path('', auth_views.LoginView.as_view(template_name='account/login.html'), name="show_loginPage"),
+
+    #登录之后跳转到该页,该页即首页
+    path('index/', auth_views.IndexPageView.as_view(), name='show_index'),
+    path('homepage/', auth_views.HomePageView.as_view(), name='show_homePage'),
+
+    #账户相关
     path('admin/', admin.site.urls),
     path('account/', include('account.urls', namespace='account')),
 
-#登录之后跳转到该页,该页即首页
-    path('index/member-list', auth_views.MemListPageView.as_view(), name='show_memberlist'),
-    path('index/welcome1', auth_views.Welcome1PageView.as_view(), name='show_welcome1'),
-    path('homepage/', auth_views.HomePageView.as_view(), name='show_homePage'),
-    path('index/', auth_views.IndexPageView.as_view(), name='show_index'),
+    #客户相关
+    path('index/customer/', include('customer.urls', namespace='customer')),
 
-#直接访问IP:port 后边不用加路径, 即http://192.168.5.105:8000就会跳转到login.html
-#方法一,这样不会在html模板中使用{{form.password}}
-	#url('', TemplateView.as_view(template_name="account/login.html"), name='show_loginPage'),
-#方法二,这样可以在html模板中使用{{form.password}}
-	path('', auth_views.LoginView.as_view(template_name='account/login.html'), name="show_loginPage"),
+    #订单相关
+    path('index/order/', include('order.urls', namespace='order')),
+
     re_path(r'media/(?P<path>.*)$',serve,{'document_root':settings.MEDIA_ROOT}),
 ]
 
