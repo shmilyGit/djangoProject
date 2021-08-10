@@ -33,15 +33,15 @@
 
 {% block jsscript %}
 <script type="text/html" id="toolbarDemo">
-  <div class="layui-btn-container">
-    <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
-    <button class="layui-btn" onclick="xadmin.open('添加用户','add',600,400)"><i class="layui-icon"></i>添加</button>
-  </div>
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
+        <button class="layui-btn" onclick="xadmin.open('添加用户','add',600,400)"><i class="layui-icon"></i>添加</button>
+    </div>
 </script>
 
 <script type="text/html" id="barOper">
-  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 
 <script>
@@ -75,12 +75,29 @@
         table.on('tool(f_customerlist)', function(obj){
             var data = obj.data;
             if(obj.event === 'del'){
-                layer.confirm('真的删除行么', function(index){
-                  obj.del();
-                  layer.close(index);
+                layer.confirm('确定要删除?', function(index){
+                    $.ajax({
+                        type:'post',
+                        url:"{% url 'customer:show_customerDel' 0 %}".replace('0', data.id),
+                        data:{},
+                        success:function(res){
+                            if (res.code == 0)
+                            {
+                                layer.msg("删除成功!");
+                                obj.del();
+                                layer.close(index);
+                            }
+
+                        },
+                        error:function(res)
+                        {
+                            layer.msg("删除失败!");
+                        }
+                    });
                 });
             } else if(obj.event === 'edit'){
-                layer.alert('编辑行：<br>'+ JSON.stringify(data))
+                uri = obj.data.id + '/update'; 
+                xadmin.open('编辑用户',uri,600,400);
             }
         });
     });

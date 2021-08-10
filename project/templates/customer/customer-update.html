@@ -6,27 +6,27 @@
             <form class="layui-form">{% csrf_token %}
                 <div class="layui-form-item">
                     <label for="id_customer" class="layui-form-label">
-                        <span class="x-red">*</span>客户名称</label>
+                        <span class="x-red">*</span>客户名称{{customer.pk}}</label>
                     <div class="layui-input-inline">
-                        <input type="text" id="id_customer" name="customer" required="" lay-verify="required" autocomplete="off" class="layui-input" value="aa">
+                        <input type="text" id="id_customer" name="customer" required="" lay-verify="required" autocomplete="off" class="layui-input" value="{{customer.customer}}">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label for="id_contact" class="layui-form-label">
                         <span class="x-red">*</span>联系人</label>
                     <div class="layui-input-inline">
-                        <input type="text" id="id_contact" name="contact" required="" lay-verify="required" autocomplete="off" class="layui-input" value="bb"></div>
+                        <input type="text" id="id_contact" name="contact" required="" lay-verify="required" autocomplete="off" class="layui-input" value="{{customer.contact}}"></div>
                 </div>
                 <div class="layui-form-item">
                     <label for="id_phone" class="layui-form-label">
                         <span class="x-red">*</span>联系方式</label>
                     <div class="layui-input-inline">
-                        <input type="text" id="id_phone" name="phone" required="" lay-verify="phone" autocomplete="off" class="layui-input" value="12345678901">
+                        <input type="text" id="id_phone" name="phone" required="" lay-verify="phone" autocomplete="off" class="layui-input" value="{{customer.phone}}">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label"></label>
-                    <button class="layui-btn" lay-filter="add" lay-submit="">增加</button>
+                    <button class="layui-btn" lay-filter="update" lay-submit="">修改</button>
                 </div>
             </form>
         </div>
@@ -43,31 +43,27 @@
             layer = layui.layer;
 
             //监听提交
-            form.on('submit(add)',
+            form.on('submit(update)',
             function(data) {
                 //发异步，把数据提交给php
+                console.log (data.field);
                 $.ajax({
                     type:'post',
-                    url:"{% url 'customer:show_customerAdd' %}",
+                    url:"{% url 'customer:show_customerUpdate' 00 %}".replace('0', {{customer.id}}),
                     data:data.field,
-                    //data:{customer:customer,contact:contact, phone:phone,csrfmiddlewaretoken: '{{ csrf_token }}'}, //等价于data: data.field;
                     success:function(res){
-                        if (res.code == 0)
-                        {
-                            layer.alert("添加成功", {icon: 6},function() {
-                                xadmin.close();//关闭当前frame
-                                xadmin.father_reload();// 可以对父窗口进行刷新 
-                            });
-                        }
+                            layer.msg("更新成功!");
+                            xadmin.close();//关闭当前frame
+                            xadmin.father_reload();// 可以对父窗口进行刷新 
                     },
                     error:function(res)
                     {
-                        layer.msg("添加失败.");
+                        layer.msg("更新失败!");
                     }
                 });
-                           
                 return false;
             });
-        });
+        }
+    );
 </script>
 {% endblock %}

@@ -15,7 +15,8 @@ from .forms import CustomerAddForm
 ##BEGIN: Add by SRJ-SGL 
 #客户列表
 class CustomerListPageView(LoginRequiredMixin, TemplateView):
-    login_url = "/account/login/"
+    ## login_url = "/account/login/"  和下边一行的功能是一样的,一个是硬编码,一个是灵活实现
+    login_url = reverse_lazy('user_login') 
     template_name = "customer/customer-list.html"
 
     def get(self, request):
@@ -66,13 +67,90 @@ class CustomerAddPageView(LoginRequiredMixin, CreateView):
 
     def post(self, request, *args, **kwargs):
         formObj = CustomerAddForm(request.POST)
+        resultdict = {}
 
         if formObj.is_valid():
             form_cd = formObj.cleaned_data 
             new_otrequest = formObj.save(commit=False)
             new_otrequest.save(form_cd)
-            return redirect("customer:show_customerList")
+
+            resultdict['code'] = 0
+            resultdict['msg'] = ""
+            return JsonResponse(resultdict, safe=False) 
+            ##return redirect("customer:show_customerList")
 
         return self.render_to_response({"form":formObj})
+
+class CustomerDelPageView(LoginRequiredMixin, DeleteView):
+    login_url = "/account/login/"
+    success_url = reverse_lazy('customer:show_customerList')
+
+    model = CustomerModel
+
+    def delete(self, request, *args, **kwargs):
+        ##for k, v in kwargs.items():
+        ##    print ('%s，%s；' , (k, v))
+        super(CustomerDelPageView, self).delete(request, *args, **kwargs)
+        return JsonResponse({'code':0, 'msg':''}) 
+
+class CustomerDetailPageView(LoginRequiredMixin, DeleteView):
+    template_name = "customer/customer-update.html"
+    context_object_name = "customer"
+
+    model = CustomerModel
+
+    ##如果不要下边的这个函数,是不会把信息返回到表单的
+    ##def get_object(self, queryset=None):
+    ##    obj = super(CustomerDetailPageView, self).get_object()
+    ##    return obj
+
+    ##下边注释的两个函数其实放开效果是一样的,只不过是记录一下怎么取url中的参数的方法
+    ##def get_object(self,queryset=None):
+    ##    obj_id = int(self.kwargs.get(self.pk_url_kwarg, None))
+    ##    obj = self.model.objects.get(id = obj_id)
+    ##    return obj 
+    
+    def get_context_data(self, **kwargs):
+        context = super(CustomerDetailPageView, self).get_context_data(**kwargs)
+        return context
+
+class CustomerUpdatePageView(LoginRequiredMixin, UpdateView):
+    login_url = "/account/login/"
+    success_url = reverse_lazy('customer:show_customerList')
+
+    template_name = "customer/customer-update.html"
+    template_name_suffix = '_update_form'
+    fields = ['customer', 'contact', 'phone']
+    context_object_name = "customer"
+
+    model = CustomerModel
+
+    ##以下的方式也可以用,相当于自己实现更新这个功能
+    ##form_class = CustomerAddForm 
+
+    ##def get_context_data(self, **kwargs):
+    ##    context = super(CustomerUpdatePageView,self).get_context_data(**kwargs)
+    ##    return context
+
+    ##def post(self, request, *args, **kwargs):
+    ##    formObj = CustomerAddForm(request.POST)
+    ##    resultdict = {}
+
+    ##    if formObj.is_valid():
+    ##        form_cd = formObj.cleaned_data 
+
+    ##        original = super(CustomerUpdatePageView, self).get_object()
+    ##        ##original.customer = form_cd['customer']
+    ##        ##original.contact= form_cd['contact']
+    ##        ##original.phone= form_cd['phone']
+    ##        original.save(form_cd)
+
+    ##        resultdict['code'] = 0
+    ##        resultdict['msg'] = ""
+    ##        return JsonResponse(resultdict, safe=False) 
+
+    ##    resultdict['code'] = 1
+    ##    resultdict['msg'] = "update failed."
+    ##    return JsonResponse(resultdict, safe=False) 
 
 ##END: Add by SRJ-SGL 
