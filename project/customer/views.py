@@ -14,6 +14,26 @@ from .forms import CustomerAddForm
 
 ##BEGIN: Add by SRJ-SGL 
 #客户列表
+class CustomerSearchPageView(LoginRequiredMixin, TemplateView):
+    ## login_url = "/account/login/"  和下边一行的功能是一样的,一个是硬编码,一个是灵活实现
+    login_url = reverse_lazy('user_login') 
+    template_name = "customer/customer-list.html"
+
+    def get(self, request):
+        q = {}
+        filter_customer = request.GET.get('filter_customer')         
+        filter_contact = request.GET.get('filter_contact')         
+        filter_phone = request.GET.get('filter_phone')         
+        if filter_customer:
+            q['customer'] = filter_customer
+        if filter_contact:
+            q['contact'] = filter_contact
+        if filter_phone:
+            q['phone'] = filter_phone
+        queryset = CustomerModel.objects.filter(**q)
+        print ("==============================================", queryset)
+        return render(request, self.template_name, )
+
 class CustomerListPageView(LoginRequiredMixin, TemplateView):
     ## login_url = "/account/login/"  和下边一行的功能是一样的,一个是硬编码,一个是灵活实现
     login_url = reverse_lazy('user_login') 
@@ -23,16 +43,33 @@ class CustomerListPageView(LoginRequiredMixin, TemplateView):
         return render(request, self.template_name)
 
     def post(self, request, *args, **kwargs):
-        page = request.POST.get('page')
-        rows = request.POST.get('limit')
+        ## 过滤条件参数
+        q = {}
+        filter_customer = request.POST.get('filter_customer')         
+        filter_contact = request.POST.get('filter_contact')         
+        filter_phone = request.POST.get('filter_phone')         
+        filter_search= request.POST.get('search')         
+        if filter_customer:
+            q['customer'] = filter_customer
+        if filter_contact:
+            q['contact'] = filter_contact
+        if filter_phone:
+            q['phone'] = filter_phone
 
-        start = (int(page) - 1) * int(rows)
-        end = (int(page) - 1) * int(rows) + int(rows)
+        total = 0
+        print ("============================filter **q:", q)
+        customers  = CustomerModel.objects.filter(**q)
 
-        customers  = CustomerModel.objects.all()
-        total = customers.count()
+        ## 判断是搜索的数据还是直接显示的数据
+        if not filter_search:
+            page = request.POST.get('page')
+            rows = request.POST.get('limit')
+            print ("=================page: rows:", page, rows) 
+            start = (int(page) - 1) * int(rows)
+            end = (int(page) - 1) * int(rows) + int(rows)
+            total = customers.count()
+            customers = customers[start:end]
 
-        customers = customers[start:end]
 
         dict = []
         resultdict = {}

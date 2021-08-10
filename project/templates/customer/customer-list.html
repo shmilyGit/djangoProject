@@ -6,23 +6,27 @@
             <div class="layui-col-md12">
                 <div class="layui-card">
                     <div class="layui-card-body ">
-                        <form class="layui-form layui-col-space5">
+                        <form class="layui-form layui-col-space5" action="{% url 'customer:show_customerList' %}" method="post">{% csrf_token %}
                             <div class="layui-inline layui-show-xs-block">
-                                <input class="layui-input"  autocomplete="off" placeholder="开始日" name="start" id="start">
+                                <input class="layui-input" type="text" name="filter_customer"  placeholder="客户名称" id="id_customer">
                             </div>
                             <div class="layui-inline layui-show-xs-block">
-                                <input class="layui-input"  autocomplete="off" placeholder="截止日" name="end" id="end">
+                                <input class="layui-input" type="text" name="filter_contact" placeholder="联系人" id="id_contact">
                             </div>
                             <div class="layui-inline layui-show-xs-block">
-                                <input type="text" name="username"  placeholder="请输入用户名" autocomplete="off" class="layui-input">
+                                <input class="layui-input" type="text" name="filter_phone" placeholder="联系电话" id="id_phone">
                             </div>
                             <div class="layui-inline layui-show-xs-block">
-                                <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+                                <input type="hidden" name="search" id="id_page" value="1">
+                            </div>
+                            <div class="layui-inline layui-show-xs-block">
+                                <button class="layui-btn"  lay-submit="" lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button>
                             </div>
                         </form>
                     </div>
                     <div class="layui-card-body layui-table-body layui-table-main">
                         <table id="id_customerlist" class="layui-table layui-form"  lay-filter="f_customerlist"></table>
+                        <table id="id_customerlist1" class="layui-table layui-form"  lay-filter="f_customerlist1"></table>
                     </div>
                 </div>
             </div>
@@ -32,14 +36,14 @@
 {% endblock %}
 
 {% block jsscript %}
-<script type="text/html" id="toolbarDemo">
-    <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
+<script type="text/html" id="toolbarCustomerList">
+    <div class="layui-btn-group customerListTable">
+        <button class="layui-btn layui-btn-danger" data-type="delAllChecked"><i class="layui-icon"></i>批量删除</button> 
         <button class="layui-btn" onclick="xadmin.open('添加用户','add',600,400)"><i class="layui-icon"></i>添加</button>
     </div>
 </script>
 
-<script type="text/html" id="barOper">
+<script type="text/html" id="toolbarOper">
     <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
@@ -55,20 +59,24 @@
             height: 'full-180',
             page: true, //开启分页
             limit: 10,
-            toolbar: '#toolbarDemo',
+            toolbar: '#toolbarCustomerList',
             defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
                 title: '提示',
                 layEvent: 'LAYTABLE_TIPS',
                 icon: 'layui-icon-tips',
                 }],
             cols: [[ //表头
-                {type:'checkbox'},
-                {type:'numbers', title: 'ID', field: 'id', width: 100, align:'center'},
+                {type: 'checkbox', templet:function(row){
+                    var html = "<input type='checkbox' name='layTableCheckbox' lay-skin='primary' lay-filter='checkboxIsSelected' class='checkboxIsSelected' value='{{customer.pk}}'> "; 
+                    return html;
+                    }
+                },
+                {type: 'numbers', title: 'ID',width: 100, align:'center'},
                 {field: 'customer', title: '客户名称', align:'center', sort: true},
                 {field: 'contact',  title: '联系人',   align:'center', sort: true},
                 {field: 'phone',    title: '联系电话', align:'center', sort: true},
                 {field: 'created',  title: '添加时间', align:'center', sort: true},
-                {title: '操作', toolbar: '#barOper',   align:'center'}
+                {title: '操作', toolbar: '#toolbarOper',   align:'center'}
             ]]
         });  
         
@@ -99,38 +107,40 @@
                 uri = obj.data.id + '/update'; 
                 xadmin.open('编辑用户',uri,600,400);
             }
+
+        });
+
+        var $ = layui.$, active = {
+            delAllChecked: function(){ //获取选中数据
+                var checkStatus = table.checkStatus('id_customerlist');
+                data = checkStatus.data;
+                data.forEach((item, index, array)=>{
+                    $.ajax({
+                        type:'post',
+                        url:"{% url 'customer:show_customerDel' 0 %}".replace('0', item.id),
+                        data:{},
+                        success:function(res){
+                            if (res.code == 0)
+                            {
+                                layer.msg("删除成功!");
+                                location.reload();
+                            }
+                        },
+                        error:function(res)
+                        {
+                            layer.msg("删除失败!");
+                        }
+                    });
+                })
+            }
+        };
+  
+        $('.customerListTable .layui-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
         });
     });
 
-    layui.use(['form'], function(){
-        var form = layui.form;
-        
-        // 监听全选
-        form.on('checkbox(checkall)', function(data){
-            if(data.elem.checked){
-              $('tbody input').prop('checked',true);
-            }else{
-              $('tbody input').prop('checked',false);
-            }
-            form.render('checkbox');
-        }); 
-    });
 
-    function delAll (argument) {
-        var ids = [];
-
-        // 获取选中的id 
-        $('tbody input').each(function(index, el) {
-            if($(this).prop('checked')){
-               ids.push($(this).val())
-            }
-        });
-
-        layer.confirm('确认要删除吗？'+ids.toString(),function(index){
-            //捉到所有被选中的，发异步进行删除
-            layer.msg('删除成功', {icon: 1});
-            $(".layui-form-checked").not('.header').parents('tr').remove();
-        });
-    }
 </script>
 {% endblock %}
