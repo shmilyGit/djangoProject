@@ -6,7 +6,7 @@
             <div class="layui-col-md12">
                 <div class="layui-card">
                     <div class="layui-card-body ">
-                        <form class="layui-form layui-col-space5" action="{% url 'customer:show_customerList' %}" method="post">{% csrf_token %}
+                        <form class="layui-form layui-col-space5">{% csrf_token %}
                             <div class="layui-inline layui-show-xs-block">
                                 <input class="layui-input" type="text" name="filter_customer"  placeholder="客户名称" id="id_customer">
                             </div>
@@ -16,17 +16,18 @@
                             <div class="layui-inline layui-show-xs-block">
                                 <input class="layui-input" type="text" name="filter_phone" placeholder="联系电话" id="id_phone">
                             </div>
-                            <div class="layui-inline layui-show-xs-block">
-                                <input type="hidden" name="search" id="id_page" value="1">
-                            </div>
-                            <div class="layui-inline layui-show-xs-block">
-                                <button class="layui-btn"  lay-submit="" lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button>
+                            <div class="layui-inline layui-show-xs-block customerListButton">
+                                <!--不能用button,如果使用button的话,会发送两次请求.
+                                    button 的type button默认为type的值为submit,submit会默认提交一次,
+                                    再加上js里的提交就会出现重复提交的问题,把type的值改为button就可以解决问题了-->
+                                <!--button class="layui-btn"  data-type="reload" lay-submit="" lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button-->
+                                <a class="layui-btn"  id="searchBtn" data-type="reload" lay-submit=""><i class="layui-icon">&#xe615;</i>查询</a>
                             </div>
                         </form>
                     </div>
                     <div class="layui-card-body layui-table-body layui-table-main">
-                        <table id="id_customerlist" class="layui-table layui-form"  lay-filter="f_customerlist"></table>
-                        <table id="id_customerlist1" class="layui-table layui-form"  lay-filter="f_customerlist1"></table>
+                        <table id="id_customerlist" class="layui-table layui-form"  lay-filter="f_customerlist">
+                        </table>
                     </div>
                 </div>
             </div>
@@ -37,7 +38,7 @@
 
 {% block jsscript %}
 <script type="text/html" id="toolbarCustomerList">
-    <div class="layui-btn-group customerListTable">
+    <div class="layui-btn-group customerListButton">
         <button class="layui-btn layui-btn-danger" data-type="delAllChecked"><i class="layui-icon"></i>批量删除</button> 
         <button class="layui-btn" onclick="xadmin.open('添加用户','add',600,400)"><i class="layui-icon"></i>添加</button>
     </div>
@@ -49,8 +50,9 @@
 </script>
 
 <script>
-    layui.use(['table'], function(){
+    layui.use(['jquery','table'], function(){
         var table = layui.table;
+        var $ = layui.$
 
         table.render({
             elem: '#id_customerlist', 
@@ -66,11 +68,7 @@
                 icon: 'layui-icon-tips',
                 }],
             cols: [[ //表头
-                {type: 'checkbox', templet:function(row){
-                    var html = "<input type='checkbox' name='layTableCheckbox' lay-skin='primary' lay-filter='checkboxIsSelected' class='checkboxIsSelected' value='{{customer.pk}}'> "; 
-                    return html;
-                    }
-                },
+                {type: 'checkbox'},
                 {type: 'numbers', title: 'ID',width: 100, align:'center'},
                 {field: 'customer', title: '客户名称', align:'center', sort: true},
                 {field: 'contact',  title: '联系人',   align:'center', sort: true},
@@ -110,7 +108,7 @@
 
         });
 
-        var $ = layui.$, active = {
+        active = {
             delAllChecked: function(){ //获取选中数据
                 var checkStatus = table.checkStatus('id_customerlist');
                 data = checkStatus.data;
@@ -132,15 +130,32 @@
                         }
                     });
                 })
+            },
+            reload: function(){
+                table.reload('id_customerlist', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    },
+                    where: {
+                       filter_customer: $("input[name=filter_customer]").val(),
+                       filter_contact: $("input[name=filter_contact]").val(),
+                       filter_phone: $("input[name=filter_phone]").val()
+                    }
+                });
             }
         };
   
-        $('.customerListTable .layui-btn').on('click', function(){
+        $('.customerListButton .layui-btn').on('click', function(){
             var type = $(this).data('type');
             active[type] ? active[type].call(this) : '';
         });
     });
 
-
+    $("#searchBtn").keydown(function(e){
+        if (e.keyCode === 13) {
+            $("#searchBtn").trigger("click");
+        }
+    });
+    
 </script>
 {% endblock %}

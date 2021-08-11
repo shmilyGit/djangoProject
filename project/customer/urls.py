@@ -13,7 +13,6 @@ urlpatterns = [
     path('<int:pk>/delete', customer_views.CustomerDelPageView.as_view(), name='show_customerDel'),
     path('<int:pk>/detail', customer_views.CustomerDetailPageView.as_view(), name='show_customerDetail'),
     path('<int:pk>/update', customer_views.CustomerUpdatePageView.as_view(), name='show_customerUpdate'),
-    path('search', customer_views.CustomerSearchPageView.as_view(), name='show_customerSearch'),
 
     ##修改记录时有两种方式
     ##一是先用DetailView类获取要修改的对象将对象的数据回显到修改表单中,再使用UpdateView类去更新对象
