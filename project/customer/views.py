@@ -109,7 +109,7 @@ class CustomerDelPageView(LoginRequiredMixin, DeleteView):
         super(CustomerDelPageView, self).delete(request, *args, **kwargs)
         return JsonResponse({'code':0, 'msg':''}) 
 
-class CustomerDetailPageView(LoginRequiredMixin, DeleteView):
+class CustomerDetailPageView(LoginRequiredMixin, DetailView):
     template_name = "customer/customer-update.html"
     context_object_name = "customer"
 
