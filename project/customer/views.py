@@ -35,11 +35,12 @@ class CustomerListPageView(LoginRequiredMixin, ListView):
         filter_phone = request.POST.get('filter_phone')         
 
         if filter_customer:
-            q['customer'] = filter_customer
+            ##'customer' + __icontains 是customer忽略大小写的意思
+            q['customer__icontains'] = filter_customer
         if filter_contact:
-            q['contact'] = filter_contact
+            q['contact__icontains'] = filter_contact
         if filter_phone:
-            q['phone'] = filter_phone
+            q['phone__icontains'] = filter_phone
 
         customers = CustomerModel.objects.filter(**q)
 
