@@ -87,8 +87,8 @@ class CustomerAddPageView(LoginRequiredMixin, CreateView):
 
         if formObj.is_valid():
             form_cd = formObj.cleaned_data 
-            new_otrequest = formObj.save(commit=False)
-            new_otrequest.save(form_cd)
+            new_customer = formObj.save(commit=False)
+            new_customer.save(form_cd)
 
             resultdict['code'] = 0
             resultdict['msg'] = ""

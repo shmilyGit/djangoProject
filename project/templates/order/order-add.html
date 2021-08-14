@@ -3,132 +3,132 @@
 <body>
     <div class="layui-fluid">
         <div class="layui-row">
-            <form class="layui-form">
+            <form class="layui-form" id="id_addOrderForm">
                 <div class="layui-form-item">
-                    <label for="username" class="layui-form-label">
-                        <span class="x-red">*</span>用户名</label>
+                    <label for="id_orderid" class="layui-form-label">
+                        <span class="x-red">*</span>订单编号</label>
                     <div class="layui-input-inline">
-                        <input type="text" id="username" name="username" required="" lay-verify="required" autocomplete="off" class="layui-input"></div>
+                        <input type="text" id="id_orderid" name="orderid" required="" lay-verify="required" autocomplete="off" class="layui-input"></div>
                 </div>
                 <div class="layui-form-item">
-                    <label for="username" class="layui-form-label">
+                    <label for="id_customer" class="layui-form-label">
+                        <span class="x-red">*</span>客户名称</label>
+                    <div class="layui-input-inline">
+                        <select name="customer">
+                            <option value="">请选择<option>
+                            {% for customer in customers %}
+                            <option value="{{customer.id}}">{{customer.customer}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="id_contact" class="layui-form-label">
                         <span class="x-red">*</span>收货人</label>
                     <div class="layui-input-inline">
-                        <input type="text" id="username" name="username" required="" lay-verify="required" autocomplete="off" class="layui-input"></div>
+                        <input type="text" id="id_contact" name="contact" required="" lay-verify="required" autocomplete="off" class="layui-input"></div>
                 </div>
                 <div class="layui-form-item">
-                    <label for="phone" class="layui-form-label">
+                    <label for="id_phone" class="layui-form-label">
                         <span class="x-red">*</span>手机</label>
                     <div class="layui-input-inline">
-                        <input type="text" id="phone" name="phone" required="" lay-verify="phone" autocomplete="off" class="layui-input"></div>
+                        <input type="text" id="id_phone" name="phone" required="" lay-verify="phone" autocomplete="off" class="layui-input"></div>
                 </div>
                 <div class="layui-form-item">
-                    <label for="username" class="layui-form-label">
-                        <span class="x-red">*</span>收货地址</label>
+                    <label for="id_deposit" class="layui-form-label">
+                        <span class="x-red">*</span>压金</label>
                     <div class="layui-input-inline">
-                        <input type="text" id="username" name="username" required="" lay-verify="required" autocomplete="off" class="layui-input"></div>
+                        <input type="text" id="id_deposit" name="deposit" placeholder="单位:元" required="" lay-verify="number" autocomplete="off" class="layui-input"></div>
                 </div>
                 <div class="layui-form-item">
-                    <label for="username" class="layui-form-label">
-                        <span class="x-red">*</span>配送物流</label>
+                    <label for="id_price" class="layui-form-label">
+                        <span class="x-red">*</span>费用/日</label>
                     <div class="layui-input-inline">
-                        <select id="shipping" name="shipping" class="valid">
-                            <option value="shentong">申通物流</option>
-                            <option value="shunfeng">顺丰物流</option></select>
-                    </div>
+                        <input type="text" id="id_price" name="price" required="" lay-verify="number" autocomplete="off" class="layui-input"></div>
                 </div>
                 <div class="layui-form-item">
-                    <label for="username" class="layui-form-label">
-                        <span class="x-red">*</span>支付方式</label>
+                    <label for="id_orderdate" class="layui-form-label">
+                        <span class="x-red">*</span>下单日期</label>
                     <div class="layui-input-inline">
-                        <select name="contrller">
-                            <option>支付方式</option>
-                            <option>支付宝</option>
-                            <option>微信</option>
-                            <option>货到付款</option></select>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label for="L_email" class="layui-form-label">
-                        <span class="x-red">*</span>发票抬头</label>
-                    <div class="layui-input-inline">
-                        <input type="text" id="L_email" name="email" required="" lay-verify="email" autocomplete="off" class="layui-input"></div>
-                    <div class="layui-form-mid layui-word-aux">
-                        <span class="x-red">*</span></div>
+                        <input class="layui-input" id="id_orderdate" name="orderdate" lay-verify="date"></div>
                 </div>
                 <div class="layui-form-item layui-form-text">
-                    <label for="desc" class="layui-form-label">商品增加</label>
+                    <label for="id_comment" class="layui-form-label">描述</label>
                     <div class="layui-input-block">
-                        <table class="layui-table">
-                            <tbody>
-                                <tr>
-                                    <td>haier海尔 BC-93TMPF 93升单门冰箱</div></td>
-                    <td>0.01</div></td>
-                <td>984</div></td>
-        <td>1</td>
-        <td>删除</td></tr>
-        <tr>
-            <td>haier海尔 BC-93TMPF 93升单门冰箱</div></td>
-    <td>0.01</div></td>
-    <td>984</div></td>
-    <td>1</td>
-    <td>删除</td></tr>
-    </tbody>
-    </table>
-    </div>
-    </div>
-    <div class="layui-form-item layui-form-text">
-        <label for="desc" class="layui-form-label">描述</label>
-        <div class="layui-input-block">
-            <textarea placeholder="请输入内容" id="desc" name="desc" class="layui-textarea"></textarea>
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <label for="L_repass" class="layui-form-label"></label>
-        <button class="layui-btn" lay-filter="add" lay-submit="">增加</button></div>
+                        <textarea placeholder="请输入内容" id="id_comment" name="comment" class="layui-textarea"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"></label>
+                    <button class="layui-btn" lay-filter="add" lay-submit="">增加</button>
+                    <button class="layui-btn" lay-filter="continue" lay-submit="">增加后继续</button>
+                </div>
     </form>
     </div>
     </div>
 </body>
 {% endblock %}
-{% block jsscript %}
-    <script>layui.use(['form', 'layer'],
-        function() {
-            $ = layui.jquery;
-            var form = layui.form,
-            layer = layui.layer;
 
-            //自定义验证规则
-            form.verify({
-                nikename: function(value) {
-                    if (value.length < 5) {
-                        return '昵称至少得5个字符啊';
+{% block jsscript %}
+<script>
+    layui.use(['laydate', 'form', 'layer'],
+    function() {
+        $ = layui.jquery;
+        var form = layui.form,
+        laydate = layui.laydate,
+        layer = layui.layer;
+        
+        laydate.render({
+            elem: '#id_orderdate'
+        });
+        
+        //监听提交
+        form.on('submit(add)',
+        function(data) {
+            $.ajax({
+                type:'post',
+                url:"{% url 'order:show_orderAdd' %}",
+                data:data.field,
+                success:function(res){
+                    if (res.code == 0)
+                    {
+                       // layer.alert("添加成功", {icon: 6},function() {
+                            xadmin.close();//关闭当前frame
+                            xadmin.father_reload();// 可以对父窗口进行刷新 
+                        //});
+                        layer.msg("添加失败.");
                     }
                 },
-                pass: [/(.+){6,12}$/, '密码必须6到12位'],
-                repass: function(value) {
-                    if ($('#L_pass').val() != $('#L_repass').val()) {
-                        return '两次密码不一致';
-                    }
+                error:function(res)
+                {
+                    layer.msg("添加失败.");
                 }
             });
+                       
+            return false;
+        });
 
-            //监听提交
-            form.on('submit(add)',
-            function(data) {
-                console.log(data);
-                //发异步，把数据提交给php
-                layer.alert("增加成功", {
-                    icon: 6
+        form.on('submit(continue)',
+        function(data) {
+            $.ajax({
+                type:'post',
+                url:"{% url 'order:show_orderAdd' %}",
+                data:data.field,
+                success:function(res){
+                    if (res.code == 0)
+                    {
+                        layer.msg("添加成功,继续添加下一个.");
+                        $("#id_addOrderForm")[0].reset();
+                    }
                 },
-                function() {
-                    // 获得frame索引
-                    var index = parent.layer.getFrameIndex(window.name);
-                    //关闭当前frame
-                    parent.layer.close(index);
-                });
-                return false;
+                error:function(res)
+                {
+                    layer.msg("添加失败.");
+                }
             });
-
-        });</script>
+                       
+            return false;
+        });
+    });
+</script>
 {% endblock %}

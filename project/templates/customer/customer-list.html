@@ -38,9 +38,9 @@
 
 {% block jsscript %}
 <script type="text/html" id="toolbarCustomerList">
-    <div class="layui-btn-group customerListButton">
-        <button class="layui-btn layui-btn-danger" data-type="delAllChecked"><i class="layui-icon"></i>批量删除</button> 
-        <button class="layui-btn" onclick="xadmin.open('添加用户','add',600,400)"><i class="layui-icon"></i>添加</button>
+    <div class="layui-btn-group xxxListButton">
+        <a class="layui-btn layui-btn-danger" data-type="delAllChecked"><i class="layui-icon"></i>批量删除</a> 
+        <a class="layui-btn" onclick="xadmin.open('添加用户','add',600,400)"><i class="layui-icon"></i>添加</a>
     </div>
 </script>
 
@@ -50,114 +50,114 @@
 </script>
 
 <script>
-    layui.use(['jquery','table'], function(){
-        var table = layui.table;
-        var $ = layui.$
+layui.use(['jquery','table'], function(){
+    var table = layui.table;
+    var $ = layui.$
 
-        table.render({
-            elem: '#id_customerlist', 
-            method: 'post',
-            url: "{% url 'customer:show_customerList' %}", //数据接口
-            height: 'full-180',
-            page: true, //开启分页
-            limit: 10,
-            toolbar: '#toolbarCustomerList',
-            defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
-                title: '提示',
-                layEvent: 'LAYTABLE_TIPS',
-                icon: 'layui-icon-tips',
-                }],
-            cols: [[ //表头
-                {type: 'checkbox'},
-                {type: 'numbers', title: 'ID',width: 100, align:'center'},
-                {field: 'customer', title: '客户名称', align:'center', sort: true},
-                {field: 'contact',  title: '联系人',   align:'center', sort: true},
-                {field: 'phone',    title: '联系电话', align:'center', sort: true},
-                {field: 'created',  title: '添加时间', align:'center', sort: true},
-                {title: '操作', toolbar: '#toolbarOper',   align:'center'}
-            ]]
-        });  
-        
-        table.on('tool(f_customerlist)', function(obj){
-            var data = obj.data;
-            if(obj.event === 'del'){
-                layer.confirm('确定要删除?', function(index){
-                    $.ajax({
-                        type:'post',
-                        url:"{% url 'customer:show_customerDel' 0 %}".replace('0', data.id),
-                        data:{},
-                        success:function(res){
-                            if (res.code == 0)
-                            {
-                                layer.msg("删除成功!");
-                                obj.del();
-                                layer.close(index);
-                            }
-
-                        },
-                        error:function(res)
+    table.render({
+        elem: '#id_customerlist', 
+        method: 'post',
+        url: "{% url 'customer:show_customerList' %}", //数据接口
+        height: 'full-180',
+        page: true, //开启分页
+        limit: 10,
+        toolbar: '#toolbarCustomerList',
+        defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+            title: '提示',
+            layEvent: 'LAYTABLE_TIPS',
+            icon: 'layui-icon-tips',
+            }],
+        cols: [[ //表头
+            {type: 'checkbox'},
+            {type: 'numbers', title: '序号',width: 100, align:'center'},
+            {field: 'customer', title: '客户名称', align:'center', sort: true},
+            {field: 'contact',  title: '联系人',   align:'center', sort: true},
+            {field: 'phone',    title: '联系电话', align:'center', sort: true},
+            {field: 'created',  title: '添加时间', align:'center', sort: true},
+            {title: '操作', toolbar: '#toolbarOper',   align:'center'}
+        ]]
+    });  
+    
+    table.on('tool(f_customerlist)', function(obj){
+        var data = obj.data;
+        if(obj.event === 'del'){
+            layer.confirm('确定要删除?', function(index){
+                $.ajax({
+                    type:'post',
+                    url:"{% url 'customer:show_customerDel' 0 %}".replace('0', data.id),
+                    data:{},
+                    success:function(res){
+                        if (res.code == 0)
                         {
-                            layer.msg("删除失败!");
+                            layer.msg("删除成功!");
+                            obj.del();
+                            layer.close(index);
                         }
-                    });
-                });
-            } else if(obj.event === 'edit'){
-                uri = obj.data.id + '/update'; 
-                xadmin.open('编辑用户',uri,600,400);
-            }
 
-        });
-
-        active = {
-            delAllChecked: function(){ //获取选中数据
-                var checkStatus = table.checkStatus('id_customerlist');
-                data = checkStatus.data;
-                data.forEach((item, index, array)=>{
-                    $.ajax({
-                        type:'post',
-                        url:"{% url 'customer:show_customerDel' 0 %}".replace('0', item.id),
-                        data:{},
-                        success:function(res){
-                            if (res.code == 0)
-                            {
-                                layer.msg("删除成功!");
-                                location.reload();
-                            }
-                        },
-                        error:function(res)
-                        {
-                            layer.msg("删除失败!");
-                        }
-                    });
-                })
-            },
-            reload: function(){
-                table.reload('id_customerlist', {
-                    page: {
-                        curr: 1 //重新从第 1 页开始
                     },
-                    where: {
-                       filter_customer: $("input[name=filter_customer]").val(),
-                       filter_contact: $("input[name=filter_contact]").val(),
-                       filter_phone: $("input[name=filter_phone]").val()
+                    error:function(res)
+                    {
+                        layer.msg("删除失败!");
                     }
                 });
-            }
-        };
-  
-        $('.customerListButton .layui-btn').on('click', function(){
-            var type = $(this).data('type');
-            active[type] ? active[type].call(this) : '';
-        });
+            });
+        } else if(obj.event === 'edit'){
+            uri = obj.data.id + '/update'; 
+            xadmin.open('编辑用户',uri,600,400);
+        }
+
     });
 
-    document.onkeydown = function(e){
-        var e = event.srcElement;
-        if (event.keyCode == 13)
-        {
-            document.getElementById("searchBtn").click();
-            return false;
+    active = {
+        delAllChecked: function(){ //获取选中数据
+            var checkStatus = table.checkStatus('id_customerlist');
+            data = checkStatus.data;
+            data.forEach((item, index, array)=>{
+                $.ajax({
+                    type:'post',
+                    url:"{% url 'customer:show_customerDel' 0 %}".replace('0', item.id),
+                    data:{},
+                    success:function(res){
+                        if (res.code == 0)
+                        {
+                            layer.msg("删除成功!");
+                            location.reload();
+                        }
+                    },
+                    error:function(res)
+                    {
+                        layer.msg("删除失败!");
+                    }
+                });
+            })
+        },
+        reload: function(){
+            table.reload('id_customerlist', {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: {
+                   filter_customer: $("input[name=filter_customer]").val(),
+                   filter_contact: $("input[name=filter_contact]").val(),
+                   filter_phone: $("input[name=filter_phone]").val()
+                }
+            });
         }
+    };
+
+    $('.xxxListButton .layui-btn').on('click', function(){
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
+    });
+});
+
+document.onkeydown = function(e){
+    var e = event.srcElement;
+    if (event.keyCode == 13)
+    {
+        document.getElementById("searchBtn").click();
+        return false;
     }
+}
 </script>
 {% endblock %}

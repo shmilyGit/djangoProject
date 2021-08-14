@@ -1,0 +1,103 @@
+{% extends "frame/tabpages.html" %}
+{% block content %}
+<body>
+    <div class="layui-fluid">
+        <div class="layui-row">
+            <form class="layui-form">{% csrf_token %}
+                <div class="layui-form-item">
+                    <label for="id_orderid" class="layui-form-label">
+                        <span class="x-red">*</span>订单编号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="id_orderid" name="orderid" required="" lay-verify="required" autocomplete="off" class="layui-input" value="{{order.orderid}}"></div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="id_customer" class="layui-form-label">
+                        <span class="x-red">*</span>客户名称</label>
+                    <div class="layui-input-inline">
+                        <select name="customer">
+                            <option value="{{order.customer.id}}">{{order.customer.customer}}<option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="id_contact" class="layui-form-label">
+                        <span class="x-red">*</span>收货人</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="id_contact" name="contact" lay-verify="required" autocomplete="off" class="layui-input" value="{{order.contact}}"></div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="id_phone" class="layui-form-label">
+                        <span class="x-red">*</span>手机</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="id_phone" name="phone" lay-verify="phone" autocomplete="on" class="layui-input" value="{{order.phone}}"></div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="id_deposit" class="layui-form-label">
+                        <span class="x-red">*</span>压金</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="id_deposit" name="deposit" placeholder="单位:元" autocomplete="off" lay-verify="number" class="layui-input" value="{{order.deposit}}"></div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="id_price" class="layui-form-label">
+                        <span class="x-red">*</span>费用/日</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="id_price" name="price" autocomplete="off" lay-verify="number" class="layui-input" value="{{order.price}}"></div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="id_orderdate" class="layui-form-label">
+                        <span class="x-red">*</span>下单日期</label>
+                    <div class="layui-input-inline">
+                        <input class="layui-input" id="id_orderdate" name="orderdate" lay-verify="date" value="{{order.orderdate}}"></div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label for="id_comment" class="layui-form-label">描述</label>
+                    <div class="layui-input-block">
+                        <textarea placeholder="请输入内容" id="id_comment" name="comment" class="layui-textarea">{{order.comment}}</textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"></label>
+                    <button class="layui-btn" lay-filter="update" lay-submit="">修改</button>
+                </div>
+    </form>
+    </div>
+    </div>
+</body>
+{% endblock %}
+
+{% block jsscript %}
+<script>
+layui.use(['laydate', 'form', 'layer'],
+function() {
+    $ = layui.jquery;
+    var form = layui.form,
+    laydate = layui.laydate,
+    layer = layui.layer;
+
+    laydate.render({
+        elem: '#id_orderdate'
+    });
+    
+    //监听提交
+    form.on('submit(update)',
+    function(data) {
+        $.ajax({
+            type:'post',
+            url:"{% url 'order:show_orderUpdate' 00 %}".replace('0', {{order.id}}),
+            data:data.field,
+            success:function(res){
+                layer.msg("更新成功!");
+                xadmin.close();//关闭当前frame
+                xadmin.father_reload();// 可以对父窗口进行刷新 
+            },
+            error:function(res)
+            {
+                layer.msg("更新失败!");
+            }
+        });
+                   
+        return false;
+    });
+});
+</script>
+{% endblock %}

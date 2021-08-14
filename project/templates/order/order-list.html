@@ -47,104 +47,8 @@
                             </div>
                         </form>
                     </div>
-                    <div class="layui-card-header">
-                        <button class="layui-btn layui-btn-danger" onclick="delAll()">
-                            <i class="layui-icon"></i>批量删除</button>
-                        <button class="layui-btn" onclick="xadmin.open('添加用户','add',800,600)">
-                            <i class="layui-icon"></i>添加</button></div>
                     <div class="layui-card-body ">
-                        <table class="layui-table layui-form">
-                            <thead>
-                                <tr>
-                                    <th>
-                                        <input type="checkbox" name="" lay-skin="primary">
-                                    </th>
-                                    <th>订单编号</th>
-                                    <th>收货人</th>
-                                    <th>总金额</th>
-                                    <th>应付金额</th>
-                                    <th>订单状态</th>
-                                    <th>支付状态</th>
-                                    <th>发货状态</th>
-                                    <th>支付方式</th>
-                                    <th>配送方式</th>
-                                    <th>下单时间</th>
-                                    <th>操作</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <input type="checkbox" name="" lay-skin="primary"></td>
-                                    <td>2017009171822298053</td>
-                                    <td>老王:18925139194</td>
-                                    <td>7829.10</td>
-                                    <td>7854.10</td>
-                                    <td>待确认</td>
-                                    <td>未支付</td>
-                                    <td>未发货</td>
-                                    <td>其他方式</td>
-                                    <td>申通物流</td>
-                                    <td>2017-08-17 18:22</td>
-                                    <td class="td-manage">
-                                        <a title="查看" onclick="xadmin.open('编辑','order-view.html')" href="javascript:;">
-                                            <i class="layui-icon">&#xe63c;</i></a>
-                                        <a title="删除" onclick="member_del(this,'要删除的id')" href="javascript:;">
-                                            <i class="layui-icon">&#xe640;</i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <input type="checkbox" name="" lay-skin="primary"></td>
-                                    <td>2017009171822298053</td>
-                                    <td>老王:18925139194</td>
-                                    <td>7829.10</td>
-                                    <td>7854.10</td>
-                                    <td>待确认</td>
-                                    <td>未支付</td>
-                                    <td>未发货</td>
-                                    <td>其他方式</td>
-                                    <td>申通物流</td>
-                                    <td>2017-08-17 18:22</td>
-                                    <td class="td-manage">
-                                        <a title="查看" onclick="xadmin.open('编辑','order-view.html')" href="javascript:;">
-                                            <i class="layui-icon">&#xe63c;</i></a>
-                                        <a title="删除" onclick="member_del(this,'要删除的id')" href="javascript:;">
-                                            <i class="layui-icon">&#xe640;</i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <input type="checkbox" name="" lay-skin="primary"></td>
-                                    <td>2017009171822298053</td>
-                                    <td>老王:18925139194</td>
-                                    <td>7829.10</td>
-                                    <td>7854.10</td>
-                                    <td>待确认</td>
-                                    <td>未支付</td>
-                                    <td>未发货</td>
-                                    <td>其他方式</td>
-                                    <td>申通物流</td>
-                                    <td>2017-08-17 18:22</td>
-                                    <td class="td-manage">
-                                        <a title="查看" onclick="xadmin.open('编辑','order-view.html')" href="javascript:;">
-                                            <i class="layui-icon">&#xe63c;</i></a>
-                                        <a title="删除" onclick="member_del(this,'要删除的id')" href="javascript:;">
-                                            <i class="layui-icon">&#xe640;</i></a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="layui-card-body ">
-                        <div class="page">
-                            <div>
-                                <a class="prev" href="">&lt;&lt;</a>
-                                <a class="num" href="">1</a>
-                                <span class="current">2</span>
-                                <a class="num" href="">3</a>
-                                <a class="num" href="">489</a>
-                                <a class="next" href="">&gt;&gt;</a></div>
-                        </div>
+                        <table id="id_orderlist" class="layui-table layui-form" lay-filter="f_orderlist"></table>
                     </div>
                 </div>
             </div>
@@ -154,77 +58,136 @@
 {% endblock %}
 
 {% block jsscript %}
-<script>layui.use(['laydate', 'form'],
-    function() {
-        var laydate = layui.laydate;
-    
-        //执行一个laydate实例
-        laydate.render({
-            elem: '#start' //指定元素
-        });
-    
-        //执行一个laydate实例
-        laydate.render({
-            elem: '#end' //指定元素
-        });
+<script type="text/html" id="toolbarOrderList">
+    <div class="layui-btn-group xxxListButton">
+        <a class="layui-btn layui-btn-danger" data-type="delAllChecked"><i class="layui-icon"></i>批量删除</a> 
+        <a class="layui-btn" onclick="xadmin.open('添加订单','add',800,600)"><i class="layui-icon"></i>添加</a>
+    </div>
+</script>
+
+<script type="text/html" id="toolbarOper">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script>
+layui.use(['jquery','table'], function(){
+    var table = layui.table;
+    var $ = layui.$
+
+    table.render({
+        elem: '#id_orderlist', 
+        method: 'post',
+        url: "{% url 'order:show_orderList' %}", //数据接口
+        height: 'full-180',
+        cellMinWidth: 50,
+        page: true, //开启分页
+        limit: 10,
+        toolbar: '#toolbarOrderList',
+        defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+            title: '提示',
+            layEvent: 'LAYTABLE_TIPS',
+            icon: 'layui-icon-tips',
+            }],
+        cols: [[ //表头
+            {type: 'checkbox', width:'5%'},
+            {type: 'numbers',   title: '序号',        width:'5%',  align:'center'},
+            {field: 'orderid',  title: '订单编号',    width:'8%', align:'center', sort: true},
+            {field: 'customer', title: '客户名称',   width:'8%', align:'center', sort: true},
+            {field: 'contact',  title: '联系人',     width:'7%', align:'center', sort: true},
+            {field: 'phone',    title: '联系方式',   width:'7%', align:'center', sort: true},
+            {field: 'deposit',  title: '压金',       width:'5%',  align:'center', sort: true},
+            {field: 'price',    title: '价格/日',    width:'7%',  align:'center', sort: true,
+                templet: function(d){
+                    return d.price + ' 元';
+                }
+            },
+            {field: 'effectdays', title: '已租', width:'5%',  align:'center', sort: true, 
+                templet: function(d){
+                    return d.effectdays + ' 天';
+                }
+            },
+            {field: 'balance',    title: '余额',     width:'7%',  align:'center', sort: true},
+            {field: 'comment',    title: '备注',                  align:'center', sort: true},
+            {field: 'orderdate',  title: '下单时间', width:'7%', align:'center', sort: true},
+            {title: '操作', toolbar: '#toolbarOper', width:'10%', align:'center'}
+        ]],
+        done:function(){
+            $("table").css("width","100%");
+        }
+    });  
+
+    table.on('tool(f_orderlist)', function(obj){
+        var data = obj.data;
+        if(obj.event === 'del'){
+            layer.confirm('确定要删除?', function(index){
+                $.ajax({
+                    type:'post',
+                    url:"{% url 'order:show_orderDel' 0 %}".replace('0', data.id),
+                    data:{},
+                    success:function(res){
+                        if (res.code == 0)
+                        {
+                            layer.msg("删除成功!");
+                            obj.del();
+                            layer.close(index);
+                        }
+
+                    },
+                    error:function(res)
+                    {
+                        layer.msg("删除失败!");
+                    }
+                });
+            });
+        } else if(obj.event === 'edit'){
+            uri = obj.data.id + '/update'; 
+            xadmin.open('编辑用户',uri,600,400);
+        }
+
     });
-    
-    /*用户-停用*/
-    function member_stop(obj, id) {
-        layer.confirm('确认要停用吗？',
-        function(index) {
-    
-            if ($(obj).attr('title') == '启用') {
-    
-                //发异步把用户状态进行更改
-                $(obj).attr('title', '停用');
-                $(obj).find('i').html('&#xe62f;');
-    
-                $(obj).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('已停用');
-                layer.msg('已停用!', {
-                    icon: 5,
-                    time: 1000
+
+    active = {
+        delAllChecked: function(){ //获取选中数据
+            var checkStatus = table.checkStatus('id_orderlist');
+            data = checkStatus.data;
+            data.forEach((item, index, array)=>{
+                $.ajax({
+                    type:'post',
+                    url:"{% url 'order:show_orderDel' 0 %}".replace('0', item.id),
+                    data:{},
+                    success:function(res){
+                        if (res.code == 0)
+                        {
+                            layer.msg("删除成功!");
+                            location.reload();
+                        }
+                    },
+                    error:function(res)
+                    {
+                        layer.msg("删除失败!");
+                    }
                 });
-    
-            } else {
-                $(obj).attr('title', '启用');
-                $(obj).find('i').html('&#xe601;');
-    
-                $(obj).parents("tr").find(".td-status").find('span').removeClass('layui-btn-disabled').html('已启用');
-                layer.msg('已启用!', {
-                    icon: 5,
-                    time: 1000
-                });
-            }
-    
-        });
-    }
-    
-    /*用户-删除*/
-    function member_del(obj, id) {
-        layer.confirm('确认要删除吗？',
-        function(index) {
-            //发异步删除数据
-            $(obj).parents("tr").remove();
-            layer.msg('已删除!', {
-                icon: 1,
-                time: 1000
+            })
+        },
+        reload: function(){
+            table.reload('id_orderlist', {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: {
+                   filter_order: $("input[name=filter_order]").val(),
+                   filter_contact: $("input[name=filter_contact]").val(),
+                   filter_phone: $("input[name=filter_phone]").val()
+                }
             });
-        });
-    }
-    
-    function delAll(argument) {
-    
-        var data = tableCheck.getData();
-    
-        layer.confirm('确认要删除吗？' + data,
-        function(index) {
-            //捉到所有被选中的，发异步进行删除
-            layer.msg('删除成功', {
-                icon: 1
-            });
-            $(".layui-form-checked").not('.header').parents('tr').remove();
-        });
-    }
+        }
+    };
+
+    $('.xxxListButton .layui-btn').on('click', function(){
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
+    });
+});
 </script>
 {% endblock %}
