@@ -241,7 +241,7 @@ class OrderUpdatePageView(LoginRequiredMixin, UpdateView):
             order.deposit = form_cd['deposit']  
             order.price = form_cd['price']
             order.orderdate = form_cd['orderdate']
-            order.orderdate = form_cd['comment']
+            order.comment = form_cd['comment']
 
             order.effectdays = order.get_effect_days()
             order.balance = order.get_balance()
