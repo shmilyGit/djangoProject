@@ -35,45 +35,45 @@
                         <div class="layui-card-body ">
                             <ul class="layui-row layui-col-space10 layui-this x-admin-carousel x-admin-backlog">
                                 <li class="layui-col-md2 layui-col-xs6">
-                                    <a href="javascript:;" class="x-admin-backlog-body">
-                                        <h3>文章数</h3>
+                                    <a onclick="xadmin.open('客户列表', '{% url 'customer:show_customerList' %}')" class="x-admin-backlog-body">
+                                        <h3>客户总数</h3>
                                         <p>
-                                            <cite>66</cite></p>
+                                            <cite>{{customerNum}}</cite></p>
+                                    </a>
+                                </li>
+                                <li onclick="xadmin.open('客户列表', '{% url 'order:show_orderList' %}')" class="layui-col-md2 layui-col-xs6">
+                                    <a  class="x-admin-backlog-body">
+                                        <h3>订单总数</h3>
+                                        <p>
+                                            <cite>{{orderNum}}</cite></p>
                                     </a>
                                 </li>
                                 <li class="layui-col-md2 layui-col-xs6">
                                     <a href="javascript:;" class="x-admin-backlog-body">
-                                        <h3>会员数</h3>
+                                        <h3>逾期订单</h3>
                                         <p>
-                                            <cite>12</cite></p>
+                                            <cite style="color:red">{{expired}}</cite></p>
                                     </a>
                                 </li>
                                 <li class="layui-col-md2 layui-col-xs6">
                                     <a href="javascript:;" class="x-admin-backlog-body">
-                                        <h3>回复数</h3>
+                                        <h3>今天到期</h3>
                                         <p>
-                                            <cite>99</cite></p>
+                                            <cite>{{normal}}</cite></p>
                                     </a>
                                 </li>
                                 <li class="layui-col-md2 layui-col-xs6">
                                     <a href="javascript:;" class="x-admin-backlog-body">
-                                        <h3>商品数</h3>
+                                        <h3>3天内要逾期</h3>
                                         <p>
-                                            <cite>67</cite></p>
-                                    </a>
-                                </li>
-                                <li class="layui-col-md2 layui-col-xs6">
-                                    <a href="javascript:;" class="x-admin-backlog-body">
-                                        <h3>文章数</h3>
-                                        <p>
-                                            <cite>67</cite></p>
+                                            <cite style="color:orange">{{day3expired}}</cite></p>
                                     </a>
                                 </li>
                                 <li class="layui-col-md2 layui-col-xs6 ">
                                     <a href="javascript:;" class="x-admin-backlog-body">
-                                        <h3>文章数</h3>
+                                        <h3>7天内要逾期</h3>
                                         <p>
-                                            <cite>6766</cite></p>
+                                            <cite>{{day7expired}}</cite></p>
                                     </a>
                                 </li>
                             </ul>

@@ -39,14 +39,6 @@ from .models import UserInfo
 UserModel = get_user_model()
 
 ##BEGIN: Add by SRJ-SGL 
-class IndexPageView(LoginRequiredMixin, TemplateView):
-    template_name = "frame/index.html"
-    login_url = "/account/login/"
-
-class HomePageView(LoginRequiredMixin, TemplateView):
-    template_name = "frame/homepage.html"
-    login_url = "/account/login/"
-
 class MineHeadImage(LoginRequiredMixin, TemplateView):
     template_name = "account/imagecrop.html"
     login_url = "/account/login/"

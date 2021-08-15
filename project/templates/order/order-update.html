@@ -47,7 +47,7 @@
                     <label for="id_orderdate" class="layui-form-label">
                         <span class="x-red">*</span>下单日期</label>
                     <div class="layui-input-inline">
-                        <input class="layui-input" id="id_orderdate" name="orderdate" lay-verify="date" value="{{order.orderdate}}"></div>
+                        <input class="layui-input" id="id_orderdate" name="orderdate" lay-verify="date" value="{{order.orderdate | date:"Y-m-d" }}"></div>
                 </div>
                 <div class="layui-form-item layui-form-text">
                     <label for="id_comment" class="layui-form-label">描述</label>

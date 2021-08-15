@@ -8,7 +8,7 @@ from django.http import HttpResponse, JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 import json
 
-from .models import CustomerModel
+from .models import CustomerModel as Customer
 from .forms import CustomerAddForm 
 
 # Create your views here.
@@ -42,7 +42,7 @@ class CustomerListPageView(LoginRequiredMixin, ListView):
         if filter_phone:
             q['phone__icontains'] = filter_phone
 
-        customers = CustomerModel.objects.filter(**q)
+        customers = Customer.objects.filter(**q)
 
         start = (int(page) - 1) * int(rows)
         end = (int(page) - 1) * int(rows) + int(rows)
@@ -79,7 +79,7 @@ class CustomerAddPageView(LoginRequiredMixin, CreateView):
     ##    return render(request, "customer/customer-add.html")
     
     ##Note2 当继承的是CreateView时使用这个,功能与Note1是一样的,只是两种不同的实现方式
-    queryset = CustomerModel.objects.all()
+    queryset = Customer.objects.all()
 
     def post(self, request, *args, **kwargs):
         formObj = CustomerAddForm(request.POST)
@@ -101,7 +101,7 @@ class CustomerDelPageView(LoginRequiredMixin, DeleteView):
     login_url = "/account/login/"
     success_url = reverse_lazy('customer:show_customerList')
 
-    model = CustomerModel
+    model = Customer
 
     def delete(self, request, *args, **kwargs):
         ##for k, v in kwargs.items():
@@ -113,7 +113,7 @@ class CustomerDetailPageView(LoginRequiredMixin, DetailView):
     template_name = "customer/customer-update.html"
     context_object_name = "customer"
 
-    model = CustomerModel
+    model = Customer
 
     ##如果不要下边的这个函数,是不会把信息返回到表单的
     ##def get_object(self, queryset=None):
@@ -139,7 +139,7 @@ class CustomerUpdatePageView(LoginRequiredMixin, UpdateView):
     fields = ['name', 'contact', 'phone']
     context_object_name = "customer"
 
-    model = CustomerModel
+    model = Customer
 
     ##以下的方式也可以用,相当于自己实现更新这个功能
     ##form_class = CustomerAddForm 

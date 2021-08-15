@@ -35,3 +35,21 @@ class OrderModel(models.Model):
     def get_balance(self):
         balance = self.deposit - self.price * self.get_effect_days() 
         return balance
+
+    def get_after7days_expire(self):
+        if self.balance < self.price * 7 :
+            return 1 
+        else:
+            return 0
+
+    def get_after7days_expire(self):
+        if self.balance < self.price * 3 :
+            return 1 
+        else:
+            return 0
+
+    def get_expired(self):
+        if self.balance < 0 :
+            return 1 
+        else:
+            return 0

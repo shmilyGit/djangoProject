@@ -17,11 +17,13 @@ from django.contrib import admin
 from django.urls import path,re_path
 from django.conf.urls import url,include
 from django.views.generic import TemplateView
-from account import views as auth_views
 
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.static import serve
+
+from account import views as auth_views
+from common import views as comm_views
 
 urlpatterns = [
     #登录页
@@ -32,8 +34,8 @@ urlpatterns = [
 	path('', auth_views.LoginView.as_view(template_name='account/login.html'), name="show_loginPage"),
 
     #登录之后跳转到该页,该页即首页
-    path('index/', auth_views.IndexPageView.as_view(), name='show_index'),
-    path('homepage/', auth_views.HomePageView.as_view(), name='show_homePage'),
+    path('index/', comm_views.IndexPageView.as_view(), name='show_index'),
+    path('homepage/', comm_views.HomePageView.as_view(), name='show_homePage'),
 
     #账户相关
     path('admin/', admin.site.urls),

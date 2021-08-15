@@ -8,8 +8,8 @@ from django.http import HttpResponse, JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 import json
 
-from customer.models import CustomerModel
-from .models import OrderModel
+from customer.models import CustomerModel as Customer
+from .models import OrderModel as Order
 from .forms import OrderAddForm 
 
 # Create your views here.
@@ -49,7 +49,7 @@ class OrderListPageView(LoginRequiredMixin, ListView):
         if filter_orderdate:
             q['orderdate__icontains'] = filter_orderdate
 
-        orders = OrderModel.objects.filter(**q)
+        orders = Order.objects.filter(**q)
 
         start = (int(page) - 1) * int(rows)
         end = (int(page) - 1) * int(rows) + int(rows)
@@ -91,11 +91,11 @@ class OrderAddPageView(LoginRequiredMixin, CreateView):
 
     ##Note1 此处只能使用这个,因为要返回customers做为下拉列表的内容 
     def get(self, request):
-        customers = CustomerModel.objects.all()
+        customers = Customer.objects.all()
         return render(request, "order/order-add.html", {"customers":customers})
     
     ##Note2 当继承的是CreateView时使用这个,功能与Note1是一样的,只是两种不同的实现方式
-    ##queryset = OrderModel.objects.all()
+    ##queryset = Order.objects.all()
 
     def post(self, request, *args, **kwargs):
         formObj = OrderAddForm(request.POST)
@@ -122,7 +122,7 @@ class OrderDelPageView(LoginRequiredMixin, DeleteView):
     login_url = "/account/login/"
     success_url = reverse_lazy('order:show_orderList')
 
-    model = OrderModel
+    model = Order
 
     def delete(self, request, *args, **kwargs):
         ##for k, v in kwargs.items():
@@ -134,7 +134,7 @@ class OrderDelPageView(LoginRequiredMixin, DeleteView):
 ##    template_name = "order/order-update.html"
 ##    context_object_name = "order"
 ##
-##    model = OrderModel
+##    model = Order
 ##
 ##    ##如果不要下边的这个函数,是不会把信息返回到表单的
 ##    ##def get_object(self, queryset=None):
@@ -160,7 +160,7 @@ class OrderUpdatePageView(LoginRequiredMixin, UpdateView):
     fields = ['contact', 'phone', 'deposit', 'price', 'comment']
     context_object_name = "order"
 
-    model = OrderModel
+    model = Order
 
     ##def get_form_kwargs(self):
     ##    kwargs = super(OrderUpdatePageView,self).get_form_kwargs()
@@ -174,7 +174,7 @@ class OrderUpdatePageView(LoginRequiredMixin, UpdateView):
         if formObj.is_valid():
             form_cd = formObj.cleaned_data 
 
-            order = OrderModel.objects.get(id=self.kwargs['pk']) 
+            order = Order.objects.get(id=self.kwargs['pk']) 
             order.contact = form_cd['contact']  
             order.phone = form_cd['phone']  
             order.deposit = form_cd['deposit']  
