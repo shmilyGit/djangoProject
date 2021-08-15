@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from django.http import HttpResponse, JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import F ##一个数据库中的两个字段比较需要用到
 import json
 
 from customer.models import CustomerModel as Customer
@@ -16,6 +17,66 @@ from .forms import OrderAddForm
 
 ##BEGIN: Add by SRJ-SGL 
 #客户列表
+class OrderListCaseExpireView(LoginRequiredMixin, ListView):
+    login_url = reverse_lazy('user_login') 
+    template_name = "order/order-list-case.html"
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {"cid": kwargs.get('cid')})
+
+    def post(self, request, *args, **kwargs):
+        ## 过滤条件参数
+        ## 判断是搜索的数据还是直接显示的数据
+        q = {}
+        q['balance__gte'] = 0
+        page = request.POST.get('page')
+        rows = request.POST.get('limit')
+        cid = kwargs.get('cid')
+
+        if cid == 1:  ##已逾期
+            q = {}
+            q['balance__lt'] = 0
+        elif cid == 2:  ##今天到期
+            q['balance__lte'] = F('price')
+        elif cid == 3:   ##3天内将要逾期
+            q['balance__lte'] = F('price') * 3
+        elif cid == 4:  ##7天内将要逾期
+            q['balance__lte'] = F('price') * 7
+
+        orders = Order.objects.filter(**q)
+        total = orders.count()
+
+        start = (int(page) - 1) * int(rows)
+        end = (int(page) - 1) * int(rows) + int(rows)
+
+        total = orders.count()
+        orders = orders[start:end]
+
+        dict = []
+        resultdict = {}
+
+        for tmp in orders:
+            dic = {}
+            dic['id'] = tmp.id
+            dic['orderid'] = tmp.orderid
+            dic['customer'] = tmp.customer.name
+            dic['contact'] = tmp.contact
+            dic['phone'] = tmp.phone
+            dic['deposit'] = tmp.deposit
+            dic['price'] = tmp.price
+            dic['effectdays'] = tmp.effectdays
+            dic['balance'] = tmp.balance
+            dic['comment'] = tmp.comment
+            dic['orderdate'] = tmp.orderdate.strftime("%Y-%m-%d")
+            dict.append(dic)
+
+        resultdict['code'] = 0
+        resultdict['msg'] = ""
+        resultdict['count'] = total 
+        resultdict['data'] = dict
+
+        return JsonResponse(resultdict, safe=False) 
+
 class OrderListPageView(LoginRequiredMixin, ListView):
     ## login_url = "/account/login/"  和下边一行的功能是一样的,一个是硬编码,一个是灵活实现
     login_url = reverse_lazy('user_login') 
@@ -180,6 +241,7 @@ class OrderUpdatePageView(LoginRequiredMixin, UpdateView):
             order.deposit = form_cd['deposit']  
             order.price = form_cd['price']
             order.orderdate = form_cd['orderdate']
+            order.orderdate = form_cd['comment']
 
             order.effectdays = order.get_effect_days()
             order.balance = order.get_balance()

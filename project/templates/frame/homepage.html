@@ -41,36 +41,36 @@
                                             <cite>{{customerNum}}</cite></p>
                                     </a>
                                 </li>
-                                <li onclick="xadmin.open('客户列表', '{% url 'order:show_orderList' %}')" class="layui-col-md2 layui-col-xs6">
-                                    <a  class="x-admin-backlog-body">
+                                <li class="layui-col-md2 layui-col-xs6">
+                                    <a  onclick="xadmin.open('订单列表', '{% url 'order:show_orderList' %}')" class="x-admin-backlog-body">
                                         <h3>订单总数</h3>
                                         <p>
                                             <cite>{{orderNum}}</cite></p>
                                     </a>
                                 </li>
                                 <li class="layui-col-md2 layui-col-xs6">
-                                    <a href="javascript:;" class="x-admin-backlog-body">
+                                    <a  onclick="xadmin.open('逾期订单', '{% url 'order:show_orderListCase' 1 %}')" class="x-admin-backlog-body">
                                         <h3>逾期订单</h3>
                                         <p>
                                             <cite style="color:red">{{expired}}</cite></p>
                                     </a>
                                 </li>
                                 <li class="layui-col-md2 layui-col-xs6">
-                                    <a href="javascript:;" class="x-admin-backlog-body">
+                                    <a  onclick="xadmin.open('今天到期订单', '{% url 'order:show_orderListCase' 2 %}')" class="x-admin-backlog-body">
                                         <h3>今天到期</h3>
                                         <p>
                                             <cite>{{normal}}</cite></p>
                                     </a>
                                 </li>
                                 <li class="layui-col-md2 layui-col-xs6">
-                                    <a href="javascript:;" class="x-admin-backlog-body">
+                                    <a  onclick="xadmin.open('3天内要逾期订单', '{% url 'order:show_orderListCase' 3 %}')" class="x-admin-backlog-body">
                                         <h3>3天内要逾期</h3>
                                         <p>
                                             <cite style="color:orange">{{day3expired}}</cite></p>
                                     </a>
                                 </li>
                                 <li class="layui-col-md2 layui-col-xs6 ">
-                                    <a href="javascript:;" class="x-admin-backlog-body">
+                                    <a  onclick="xadmin.open('7天内要逾期订单', '{% url 'order:show_orderListCase' 4 %}')" class="x-admin-backlog-body">
                                         <h3>7天内要逾期</h3>
                                         <p>
                                             <cite>{{day7expired}}</cite></p>

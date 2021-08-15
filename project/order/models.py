@@ -29,6 +29,8 @@ class OrderModel(models.Model):
     def get_effect_days(self):
         date_format = "%m/%d/%Y"
         now = datetime.datetime.now()
+        print ("=============================date", self.orderdate)
+        print ("=============================comment", self.comment)
         delta = now - self.orderdate
         return delta.days + 1
 

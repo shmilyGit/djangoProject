@@ -25,7 +25,7 @@
                                     再加上js里的提交就会出现重复提交的问题,把type的值改为button就可以解决问题了-->
                                 <!--button class="layui-btn"  data-type="reload" lay-submit="" lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button-->
                                 <a class="layui-btn"  id="searchBtn" data-type="reload" lay-submit=""><i class="layui-icon">&#xe615;</i>查询</a>
-                                <a class="layui-btn"  id="resetBtn" data-type="reset" lay-submit=""><i class="layui-icon">&#xe666;</i>重置</a>
+                                <a class="layui-btn"  id="resetBtn" data-type="reset" lay-submit=""><i class="layui-icon">&#xe666;</i>重置{{cid}}</a>
                             </div>
                         </form>
                     </div>
@@ -61,6 +61,8 @@ layui.use(['jquery','table', 'laydate'], function(){
     var table = layui.table;
     var laydate = layui.laydate;
     var $ = layui.$;
+    var cid = {{cid}}
+    console.log ("====================cid", cid)
 
     laydate.render({
         elem: '#id_orderdate' //指定元素
@@ -69,7 +71,7 @@ layui.use(['jquery','table', 'laydate'], function(){
     table.render({
         elem: '#id_orderlist', 
         method: 'post',
-        url: "{% url 'order:show_orderList' %}", //数据接口
+        url: "{% url 'order:show_orderListCase' cid %}", //数据接口
         height: 'full-180',
         cellMinWidth: 50,
         page: true, //开启分页
@@ -99,10 +101,13 @@ layui.use(['jquery','table', 'laydate'], function(){
                 }
             },
             {field: 'balance',    title: '余额',     width:'7%',  align:'center', sort: true},
-            {field: 'comment',    title: '备注',                  align:'center', sort: true},
             {field: 'orderdate',  title: '下单时间', width:'7%',  align:'center', sort: true},
+            {field: 'comment',    title: '备注',                  align:'center', sort: true},
             {title: '操作', toolbar: '#toolbarOper', width:'10%', align:'center'}
-        ]]
+        ]],
+        done:function(){
+            $("table").css("width","100%");
+        }
     });  
 
     table.on('tool(f_orderlist)', function(obj){
@@ -130,7 +135,7 @@ layui.use(['jquery','table', 'laydate'], function(){
             });
         } else if(obj.event === 'edit'){
             uri = obj.data.id + '/update'; 
-            xadmin.open('编辑订单',uri,600,400);
+            xadmin.open('编辑用户',uri,600,400);
         }
 
     });

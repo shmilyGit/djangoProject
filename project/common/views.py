@@ -27,15 +27,18 @@ class HomePageView(LoginRequiredMixin, TemplateView):
         orderNum = Order.objects.all().count()
 
         q = {}
+        q['balance__gte'] = 0
 
-        q['balance__gt'] = 0
-        q['balance__lt'] = F('price')
-        expired = Order.objects.filter(balance__lte = 0).count()
+        expired = Order.objects.filter(balance__lt = 0).count()
+
+        q['balance__lte'] = F('price')
         normal = Order.objects.filter(**q).count()
-        day7expired = Order.objects.filter(balance__lte = F('price')*7).count()
-        day3expired = Order.objects.filter(balance__lte = F('price')*3).count()
 
-        normalobj = Order.objects.filter(**q)
+        q['balance__lte'] = F('price') * 3
+        day3expired = Order.objects.filter(**q).count()
+
+        q['balance__lte'] = F('price') * 7
+        day7expired = Order.objects.filter(**q).count()
 
         context = {
             'customerNum':customerNum,

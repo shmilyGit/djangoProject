@@ -6,30 +6,6 @@
             <div class="layui-col-md12">
                 <div class="layui-card">
                     <div class="layui-card-body ">
-                        <form class="layui-form layui-col-space5" id="id_searchOrderForm">
-                            <div class="layui-input-inline layui-show-xs-block">
-                                <input type="text" name="filter_orderid" placeholder="订单号" class="layui-input"></div>
-
-                            <div class="layui-input-inline layui-show-xs-block">
-                                <input type="text" name="filter_customer" placeholder="客户名称" class="layui-input"></div>
-
-                            <div class="layui-input-inline layui-show-xs-block">
-                                <input type="text" name="filter_contact" placeholder="联系人" class="layui-input"></div>
-
-                            <div class="layui-input-inline layui-show-xs-block">
-                                <input class="layui-input" placeholder="下单日期" name="filter_orderdate" id="id_orderdate"></div>
-
-                            <div class="layui-inline layui-show-xs-block xxxListButton">
-                                <!--不能用button,如果使用button的话,会发送两次请求.
-                                    button 的type button默认为type的值为submit,submit会默认提交一次,
-                                    再加上js里的提交就会出现重复提交的问题,把type的值改为button就可以解决问题了-->
-                                <!--button class="layui-btn"  data-type="reload" lay-submit="" lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button-->
-                                <a class="layui-btn"  id="searchBtn" data-type="reload" lay-submit=""><i class="layui-icon">&#xe615;</i>查询</a>
-                                <a class="layui-btn"  id="resetBtn" data-type="reset" lay-submit=""><i class="layui-icon">&#xe666;</i>重置</a>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="layui-card-body ">
                         <table id="id_orderlist" class="layui-table layui-form" lay-filter="f_orderlist"></table>
                     </div>
                 </div>
@@ -41,16 +17,6 @@
 {% endblock %}
 
 {% block jsscript %}
-<script type="text/html" id="toolbarOrderList">
-    <div class="layui-btn-group xxxListButton">
-        <a class="layui-btn layui-btn-danger" data-type="delAllChecked"><i class="layui-icon"></i>批量删除</a> 
-        <a class="layui-btn" onclick="xadmin.open('添加订单','add',800,600)"><i class="layui-icon"></i>添加</a>
-        <a class="layui-btn layui-btn-small" onclick="location.reload()" id= "id_refresh" title="刷新">
-            <i class="layui-icon layui-icon-refresh"></i>
-        </a>
-    </div>
-</script>
-
 <script type="text/html" id="toolbarOper">
     <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
@@ -61,6 +27,7 @@ layui.use(['jquery','table', 'laydate'], function(){
     var table = layui.table;
     var laydate = layui.laydate;
     var $ = layui.$;
+    var cid = {{cid}}
 
     laydate.render({
         elem: '#id_orderdate' //指定元素
@@ -69,39 +36,36 @@ layui.use(['jquery','table', 'laydate'], function(){
     table.render({
         elem: '#id_orderlist', 
         method: 'post',
-        url: "{% url 'order:show_orderList' %}", //数据接口
+        url: "{% url 'order:show_orderListCase' cid %}", //数据接口
         height: 'full-180',
         cellMinWidth: 50,
         page: true, //开启分页
         limit: 10,
-        toolbar: '#toolbarOrderList',
         defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
             title: '提示',
             layEvent: 'LAYTABLE_TIPS',
             icon: 'layui-icon-tips',
             }],
         cols: [[ //表头
-            {type: 'checkbox', width:'5%'},
-            {type: 'numbers',   title: '序号',        width:'5%',  align:'center'},
-            {field: 'orderid',  title: '订单编号',    width:'8%', align:'center', sort: true},
-            {field: 'customer', title: '客户名称',   width:'8%', align:'center', sort: true},
-            {field: 'contact',  title: '联系人',     width:'7%', align:'center', sort: true},
-            {field: 'phone',    title: '联系方式',   width:'7%', align:'center', sort: true},
-            {field: 'deposit',  title: '压金',       width:'5%',  align:'center', sort: true},
-            {field: 'price',    title: '价格/日',    width:'7%',  align:'center', sort: true,
+            {type: 'numbers',   title: '序号',       width:'5%',  align:'center'},
+            {field: 'orderid',  title: '订单编号',   width:'10%', align:'center', sort: true},
+            {field: 'customer', title: '客户名称',   width:'10%', align:'center', sort: true},
+            {field: 'contact',  title: '联系人',     width:'10%', align:'center', sort: true},
+            {field: 'phone',    title: '联系方式',   width:'10%', align:'center', sort: true},
+            {field: 'deposit',  title: '压金',       width:'8%',  align:'center', sort: true},
+            {field: 'price',    title: '价格/日',    width:'8%',  align:'center', sort: true,
                 templet: function(d){
                     return d.price + ' 元';
                 }
             },
-            {field: 'effectdays', title: '已租', width:'5%',  align:'center', sort: true, 
+            {field: 'effectdays', title: '已租', width:'8%',  align:'center', sort: true, 
                 templet: function(d){
                     return d.effectdays + ' 天';
                 }
             },
-            {field: 'balance',    title: '余额',     width:'7%',  align:'center', sort: true},
-            {field: 'comment',    title: '备注',                  align:'center', sort: true},
-            {field: 'orderdate',  title: '下单时间', width:'7%',  align:'center', sort: true},
-            {title: '操作', toolbar: '#toolbarOper', width:'10%', align:'center'}
+            {field: 'balance',    title: '余额',     width:'8%',  align:'center', sort: true},
+            {field: 'orderdate',  title: '下单时间', width:'8%',  align:'center', sort: true},
+            {field: 'comment',    title: '备注',                  align:'center', sort: true}
         ]]
     });  
 
@@ -130,7 +94,7 @@ layui.use(['jquery','table', 'laydate'], function(){
             });
         } else if(obj.event === 'edit'){
             uri = obj.data.id + '/update'; 
-            xadmin.open('编辑订单',uri,600,400);
+            xadmin.open('编辑用户',uri,600,400);
         }
 
     });
