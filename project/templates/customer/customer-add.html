@@ -3,12 +3,12 @@
 <body>
     <div class="layui-fluid">
         <div class="layui-row">
-            <form class="layui-form">{% csrf_token %}
+            <form class="layui-form" id="id_addCustomerForm">{% csrf_token %}
                 <div class="layui-form-item">
-                    <label for="id_customer" class="layui-form-label">
+                    <label for="id_name" class="layui-form-label">
                         <span class="x-red">*</span>客户名称</label>
                     <div class="layui-input-inline">
-                        <input type="text" id="id_customer" name="customer" required="" lay-verify="required" autocomplete="off" class="layui-input" value="aa">
+                        <input type="text" id="id_name" name="name" required="" lay-verify="required" autocomplete="off" class="layui-input" value="aa">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -27,6 +27,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label"></label>
                     <button class="layui-btn" lay-filter="add" lay-submit="">增加</button>
+                    <button class="layui-btn" lay-filter="continue" lay-submit="">增加后继续</button>
                 </div>
             </form>
         </div>
@@ -36,37 +37,59 @@
 
 {% block jsscript %}
 <script>
-    layui.use(['form', 'layer','jquery'],
-        function() {
-            $ = layui.jquery;
-            var form = layui.form,
-            layer = layui.layer;
+layui.use(['form', 'layer','jquery'],
+    function() {
+        $ = layui.jquery;
+        var form = layui.form,
+        layer = layui.layer;
 
-            //监听提交
-            form.on('submit(add)',
-            function(data) {
-                $.ajax({
-                    type:'post',
-                    url:"{% url 'customer:show_customerAdd' %}",
-                    data:data.field,
-                    //data:{customer:customer,contact:contact, phone:phone,csrfmiddlewaretoken: '{{ csrf_token }}'}, //等价于data: data.field;
-                    success:function(res){
-                        if (res.code == 0)
-                        {
-                            layer.alert("添加成功", {icon: 6},function() {
-                                xadmin.close();//关闭当前frame
-                                xadmin.father_reload();// 可以对父窗口进行刷新 
-                            });
-                        }
-                    },
-                    error:function(res)
+        //监听提交
+        form.on('submit(add)',
+        function(data) {
+            $.ajax({
+                type:'post',
+                url:"{% url 'customer:show_customerAdd' %}",
+                data:data.field,
+                //data:{name:name,contact:contact, phone:phone,csrfmiddlewaretoken: '{{ csrf_token }}'}, //等价于data: data.field;
+                success:function(res){
+                    if (res.code == 0)
                     {
-                        layer.msg("添加失败.");
+                        layer.alert("添加成功", {icon: 6},function() {
+                            xadmin.close();//关闭当前frame
+                            xadmin.father_reload();// 可以对父窗口进行刷新 
+                        });
                     }
-                });
-                           
-                return false;
+                },
+                error:function(res)
+                {
+                    layer.msg("添加失败.");
+                }
             });
+                       
+            return false;
         });
+
+        form.on('submit(continue)',
+        function(data) {
+            $.ajax({
+                type:'post',
+                url:"{% url 'customer:show_customerAdd' %}",
+                data:data.field,
+                success:function(res){
+                    if (res.code == 0)
+                    {
+                        layer.msg("添加成功,继续添加下一个.");
+                        $("#id_addCustomerForm")[0].reset();
+                    }
+                },
+                error:function(res)
+                {
+                    layer.msg("添加失败.");
+                }
+            });
+                       
+            return false;
+        });
+    });
 </script>
 {% endblock %}

@@ -6,9 +6,9 @@
             <div class="layui-col-md12">
                 <div class="layui-card">
                     <div class="layui-card-body ">
-                        <form class="layui-form layui-col-space5">{% csrf_token %}
+                        <form class="layui-form layui-col-space5" id="id_searchCustomerForm">{% csrf_token %}
                             <div class="layui-inline layui-show-xs-block">
-                                <input class="layui-input" type="text" name="filter_customer"  placeholder="客户名称" id="id_customer">
+                                <input class="layui-input" type="text" name="filter_name"  placeholder="客户名称" id="id_name">
                             </div>
                             <div class="layui-inline layui-show-xs-block">
                                 <input class="layui-input" type="text" name="filter_contact" placeholder="联系人" id="id_contact">
@@ -16,12 +16,13 @@
                             <div class="layui-inline layui-show-xs-block">
                                 <input class="layui-input" type="text" name="filter_phone" placeholder="联系电话" id="id_phone">
                             </div>
-                            <div class="layui-inline layui-show-xs-block customerListButton">
+                            <div class="layui-inline layui-show-xs-block xxxListButton">
                                 <!--不能用button,如果使用button的话,会发送两次请求.
                                     button 的type button默认为type的值为submit,submit会默认提交一次,
                                     再加上js里的提交就会出现重复提交的问题,把type的值改为button就可以解决问题了-->
                                 <!--button class="layui-btn"  data-type="reload" lay-submit="" lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button-->
                                 <a class="layui-btn"  id="searchBtn" data-type="reload" lay-submit=""><i class="layui-icon">&#xe615;</i>查询</a>
+                                <a class="layui-btn"  id="resetBtn" data-type="reset" lay-submit=""><i class="layui-icon">&#xe666;</i>重置</a>
                             </div>
                         </form>
                     </div>
@@ -33,6 +34,7 @@
             </div>
         </div>
     </div> 
+{% include "frame/searchBindMode.html" %}
 </body>
 {% endblock %}
 
@@ -41,6 +43,9 @@
     <div class="layui-btn-group xxxListButton">
         <a class="layui-btn layui-btn-danger" data-type="delAllChecked"><i class="layui-icon"></i>批量删除</a> 
         <a class="layui-btn" onclick="xadmin.open('添加用户','add',600,400)"><i class="layui-icon"></i>添加</a>
+        <a class="layui-btn layui-btn-small" onclick="location.reload()" id= "id_refresh" title="刷新">
+            <i class="layui-icon layui-icon-refresh"></i>
+        </a>
     </div>
 </script>
 
@@ -68,13 +73,13 @@ layui.use(['jquery','table'], function(){
             icon: 'layui-icon-tips',
             }],
         cols: [[ //表头
-            {type: 'checkbox'},
-            {type: 'numbers', title: '序号',width: 100, align:'center'},
-            {field: 'customer', title: '客户名称', align:'center', sort: true},
-            {field: 'contact',  title: '联系人',   align:'center', sort: true},
-            {field: 'phone',    title: '联系电话', align:'center', sort: true},
-            {field: 'created',  title: '添加时间', align:'center', sort: true},
-            {title: '操作', toolbar: '#toolbarOper',   align:'center'}
+            {type: 'checkbox', width:'10%',},
+            {type: 'numbers', title: '序号',         width:'10%', align:'center'},
+            {field: 'name', title: '客户名称',   width:'20%', align:'center', sort: true},
+            {field: 'contact',  title: '联系人',     width:'15%', align:'center', sort: true},
+            {field: 'phone',    title: '联系电话',   width:'15%', align:'center', sort: true},
+            {field: 'created',  title: '添加时间',   width:'15%', align:'center', sort: true},
+            {title: '操作', toolbar: '#toolbarOper', width:'15%', align:'center'}
         ]]
     });  
     
@@ -137,11 +142,15 @@ layui.use(['jquery','table'], function(){
                     curr: 1 //重新从第 1 页开始
                 },
                 where: {
-                   filter_customer: $("input[name=filter_customer]").val(),
+                   filter_name: $("input[name=filter_name]").val(),
                    filter_contact: $("input[name=filter_contact]").val(),
                    filter_phone: $("input[name=filter_phone]").val()
                 }
             });
+        },
+        reset: function(){
+            $("#id_searchCustomerForm")[0].reset();
+            $("#id_refresh").click();
         }
     };
 
@@ -151,13 +160,5 @@ layui.use(['jquery','table'], function(){
     });
 });
 
-document.onkeydown = function(e){
-    var e = event.srcElement;
-    if (event.keyCode == 13)
-    {
-        document.getElementById("searchBtn").click();
-        return false;
-    }
-}
 </script>
 {% endblock %}

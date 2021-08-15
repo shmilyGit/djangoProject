@@ -1,49 +1,31 @@
 {% extends "frame/tabpages.html" %}
 {% block content %}
 <body>
-    <div class="x-nav">
-        <span class="layui-breadcrumb">
-            <a href="">首页</a>
-            <a href="">演示</a>
-            <a>
-                <cite>导航元素</cite></a>
-        </span>
-        <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
-            <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
-        </a>
-    </div>
     <div class="layui-fluid">
         <div class="layui-row layui-col-space15">
             <div class="layui-col-md12">
                 <div class="layui-card">
                     <div class="layui-card-body ">
-                        <form class="layui-form layui-col-space5">
+                        <form class="layui-form layui-col-space5" id="id_searchOrderForm">
                             <div class="layui-input-inline layui-show-xs-block">
-                                <input class="layui-input" placeholder="开始日" name="start" id="start"></div>
+                                <input type="text" name="filter_orderid" placeholder="订单号" class="layui-input"></div>
+
                             <div class="layui-input-inline layui-show-xs-block">
-                                <input class="layui-input" placeholder="截止日" name="end" id="end"></div>
+                                <input type="text" name="filter_customer" placeholder="客户名称" class="layui-input"></div>
+
                             <div class="layui-input-inline layui-show-xs-block">
-                                <select name="contrller">
-                                    <option>支付方式</option>
-                                    <option>支付宝</option>
-                                    <option>微信</option>
-                                    <option>货到付款</option></select>
-                            </div>
+                                <input type="text" name="filter_contact" placeholder="联系人" class="layui-input"></div>
+
                             <div class="layui-input-inline layui-show-xs-block">
-                                <select name="contrller">
-                                    <option value="">订单状态</option>
-                                    <option value="0">待确认</option>
-                                    <option value="1">已确认</option>
-                                    <option value="2">已收货</option>
-                                    <option value="3">已取消</option>
-                                    <option value="4">已完成</option>
-                                    <option value="5">已作废</option></select>
-                            </div>
-                            <div class="layui-input-inline layui-show-xs-block">
-                                <input type="text" name="username" placeholder="请输入订单号" autocomplete="off" class="layui-input"></div>
-                            <div class="layui-input-inline layui-show-xs-block">
-                                <button class="layui-btn" lay-submit="" lay-filter="sreach">
-                                    <i class="layui-icon">&#xe615;</i></button>
+                                <input class="layui-input" placeholder="下单日期" name="filter_orderdate" id="id_orderdate"></div>
+
+                            <div class="layui-inline layui-show-xs-block xxxListButton">
+                                <!--不能用button,如果使用button的话,会发送两次请求.
+                                    button 的type button默认为type的值为submit,submit会默认提交一次,
+                                    再加上js里的提交就会出现重复提交的问题,把type的值改为button就可以解决问题了-->
+                                <!--button class="layui-btn"  data-type="reload" lay-submit="" lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button-->
+                                <a class="layui-btn"  id="searchBtn" data-type="reload" lay-submit=""><i class="layui-icon">&#xe615;</i>查询</a>
+                                <a class="layui-btn"  id="resetBtn" data-type="reset" lay-submit=""><i class="layui-icon">&#xe666;</i>重置</a>
                             </div>
                         </form>
                     </div>
@@ -54,6 +36,7 @@
             </div>
         </div>
     </div>
+{% include "frame/searchBindMode.html" %}
 </body>
 {% endblock %}
 
@@ -62,6 +45,9 @@
     <div class="layui-btn-group xxxListButton">
         <a class="layui-btn layui-btn-danger" data-type="delAllChecked"><i class="layui-icon"></i>批量删除</a> 
         <a class="layui-btn" onclick="xadmin.open('添加订单','add',800,600)"><i class="layui-icon"></i>添加</a>
+        <a class="layui-btn layui-btn-small" onclick="location.reload()" id= "id_refresh" title="刷新">
+            <i class="layui-icon layui-icon-refresh"></i>
+        </a>
     </div>
 </script>
 
@@ -71,9 +57,14 @@
 </script>
 
 <script>
-layui.use(['jquery','table'], function(){
+layui.use(['jquery','table', 'laydate'], function(){
     var table = layui.table;
-    var $ = layui.$
+    var laydate = layui.laydate;
+    var $ = layui.$;
+
+    laydate.render({
+        elem: '#id_orderdate' //指定元素
+    });
 
     table.render({
         elem: '#id_orderlist', 
@@ -176,11 +167,17 @@ layui.use(['jquery','table'], function(){
                     curr: 1 //重新从第 1 页开始
                 },
                 where: {
-                   filter_order: $("input[name=filter_order]").val(),
+                   filter_orderid: $("input[name=filter_orderid]").val(),
+                   filter_customer: $("input[name=filter_customer]").val(),
                    filter_contact: $("input[name=filter_contact]").val(),
-                   filter_phone: $("input[name=filter_phone]").val()
+                   filter_phone: $("input[name=filter_phone]").val(),
+                   filter_orderdate: $("input[name=filter_orderdate]").val()
                 }
             });
+        },
+        reset: function(){
+            $("#id_searchOrderForm")[0].reset();
+            $("#id_refresh").click();
         }
     };
 

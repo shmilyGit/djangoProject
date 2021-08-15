@@ -20,6 +20,7 @@ class OrderListPageView(LoginRequiredMixin, ListView):
     ## login_url = "/account/login/"  和下边一行的功能是一样的,一个是硬编码,一个是灵活实现
     login_url = reverse_lazy('user_login') 
     template_name = "order/order-list.html"
+    search_fields = ('orderid', 'customer__name', 'contact', 'phone', 'orderdate')
 
     def get(self, request):
         return render(request, self.template_name)
@@ -31,16 +32,22 @@ class OrderListPageView(LoginRequiredMixin, ListView):
         page = request.POST.get('page')
         rows = request.POST.get('limit')
 
-        filter_name = request.POST.get('filter_name')         
+        filter_orderid = request.POST.get('filter_orderid')         
+        filter_customer = request.POST.get('filter_customer')         
         filter_contact = request.POST.get('filter_contact')         
         filter_phone = request.POST.get('filter_phone')         
-
-        if filter_name:
-            q['name'] = filter_name
+        filter_orderdate = request.POST.get('filter_orderdate')
+        
+        if filter_orderid:
+            q['orderid__icontains'] = filter_orderid
+        if filter_customer: ##外键不能直接过滤,需要指定过滤外键的哪个字段
+            q['customer__name__icontains'] = filter_customer
         if filter_contact:
             q['contact__icontains'] = filter_contact
         if filter_phone:
             q['phone__icontains'] = filter_phone
+        if filter_orderdate:
+            q['orderdate__icontains'] = filter_orderdate
 
         orders = OrderModel.objects.filter(**q)
 
@@ -57,7 +64,7 @@ class OrderListPageView(LoginRequiredMixin, ListView):
             dic = {}
             dic['id'] = tmp.id
             dic['orderid'] = tmp.orderid
-            dic['customer'] = tmp.customer.customer
+            dic['customer'] = tmp.customer.name
             dic['contact'] = tmp.contact
             dic['phone'] = tmp.phone
             dic['deposit'] = tmp.deposit
@@ -172,6 +179,7 @@ class OrderUpdatePageView(LoginRequiredMixin, UpdateView):
             order.phone = form_cd['phone']  
             order.deposit = form_cd['deposit']  
             order.price = form_cd['price']
+            order.orderdate = form_cd['orderdate']
 
             order.effectdays = order.get_effect_days()
             order.balance = order.get_balance()

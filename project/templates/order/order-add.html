@@ -17,7 +17,7 @@
                         <select name="customer">
                             <option value="">请选择<option>
                             {% for customer in customers %}
-                            <option value="{{customer.id}}">{{customer.customer}}</option>
+                            <option value="{{customer.id}}">{{customer.name}}</option>
                             {% endfor %}
                         </select>
                     </div>

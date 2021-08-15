@@ -5,10 +5,10 @@
         <div class="layui-row">
             <form class="layui-form">{% csrf_token %}
                 <div class="layui-form-item">
-                    <label for="id_customer" class="layui-form-label">
+                    <label for="id_name" class="layui-form-label">
                         <span class="x-red">*</span>客户名称</label>
                     <div class="layui-input-inline">
-                        <input type="text" id="id_customer" name="customer" required="" lay-verify="required" autocomplete="off" class="layui-input" value="{{customer.customer}}">
+                        <input type="text" id="id_name" name="name" required="" lay-verify="required" autocomplete="off" class="layui-input" value="{{customer.name}}">
                     </div>
                 </div>
                 <div class="layui-form-item">

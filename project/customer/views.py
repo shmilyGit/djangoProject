@@ -30,13 +30,13 @@ class CustomerListPageView(LoginRequiredMixin, ListView):
         page = request.POST.get('page')
         rows = request.POST.get('limit')
 
-        filter_customer = request.POST.get('filter_customer')         
+        filter_name = request.POST.get('filter_name')         
         filter_contact = request.POST.get('filter_contact')         
         filter_phone = request.POST.get('filter_phone')         
 
-        if filter_customer:
-            ##'customer' + __icontains 是customer忽略大小写的意思
-            q['customer__icontains'] = filter_customer
+        if filter_name:
+            ##'name' + __icontains 是name忽略大小写的意思
+            q['name__icontains'] = filter_name
         if filter_contact:
             q['contact__icontains'] = filter_contact
         if filter_phone:
@@ -56,7 +56,7 @@ class CustomerListPageView(LoginRequiredMixin, ListView):
         for tmp in customers:
             dic = {}
             dic['id'] = tmp.id
-            dic['customer'] = tmp.customer
+            dic['name'] = tmp.name
             dic['contact'] = tmp.contact
             dic['phone'] = tmp.phone
             dic['created'] = tmp.created.strftime("%Y-%m-%d %H:%M:%S")
@@ -72,7 +72,7 @@ class CustomerListPageView(LoginRequiredMixin, ListView):
 class CustomerAddPageView(LoginRequiredMixin, CreateView):
     login_url = "/account/login/"
     template_name = "customer/customer-add.html"
-    fields = ['customer', 'contact', 'phone']
+    fields = ['name', 'contact', 'phone']
 
     ##Note1 当继承的是TemplateView时使用这个
     ##def get(self, request):
@@ -136,7 +136,7 @@ class CustomerUpdatePageView(LoginRequiredMixin, UpdateView):
 
     template_name = "customer/customer-update.html"
     template_name_suffix = '_update_form'
-    fields = ['customer', 'contact', 'phone']
+    fields = ['name', 'contact', 'phone']
     context_object_name = "customer"
 
     model = CustomerModel
@@ -156,7 +156,7 @@ class CustomerUpdatePageView(LoginRequiredMixin, UpdateView):
     ##        form_cd = formObj.cleaned_data 
 
     ##        original = super(CustomerUpdatePageView, self).get_object()
-    ##        ##original.customer = form_cd['customer']
+    ##        ##original.customer = form_cd['name']
     ##        ##original.contact= form_cd['contact']
     ##        ##original.phone= form_cd['phone']
     ##        original.save(form_cd)
